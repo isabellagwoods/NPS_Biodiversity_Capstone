@@ -10,6 +10,7 @@ import pandas as pd
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split, GridSearchCV, cross_val_score
 from sklearn.preprocessing import StandardScaler
+from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import mean_squared_error, r2_score
 
@@ -33,6 +34,7 @@ X_train, X_val, y_train, y_val = train_test_split(
 # NOT allowed: changing val_rmse / val_r2 calculation below.
 
 pipeline = Pipeline([
+    ('imputer', SimpleImputer(strategy='median')),
     ('scaler', StandardScaler()),
     ('model',  LinearRegression())
 ])
