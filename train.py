@@ -1,81 +1,75 @@
-import pandas as pd
+"""
+train.py — Baseline model for NPS Biodiversity SDI Prediction
+AutoResearch loop: edit ONLY this file.
+Metric: val_rmse (lower is better). DO NOT change the metric.
+"""
+
+import time
 import numpy as np
+import pandas as pd
 from sklearn.linear_model import LinearRegression
-from sklearn.model_selection import cross_val_score
-from sklearn.pipeline import Pipeline
+from sklearn.model_selection import train_test_split, GridSearchCV, cross_val_score
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import r2_score, mean_squared_error
+from sklearn.pipeline import Pipeline
+from sklearn.metrics import mean_squared_error, r2_score
 
-# --- 1. Aggregate features per park ---
-# Traffic: mean annual traffic count per park
-traffic_features = (traffic
-                    .groupby('UnitCode')['TrafficCount']
-                    .agg(mean_traffic='mean', max_traffic='max', total_traffic='sum')
-                    .reset_index())
+# ── 0. Runtime budget ────────────────────────────────────────────────────────
+MAX_SECONDS = 300   # 5-minute hard cap — DO NOT exceed
+start_wall  = time.time()
 
-# Visitation: mean annual visitors + camping per park
-# strip commas from numeric columns first
-num_cols = ['RecreationVisitors', 'NonRecreationVisitors', 'RecreationHours',
-            'TentCampers', 'RVCampers', 'Backcountry']
+# ── 1. Load data ─────────────────────────────────────────────────────────────
+data = pd.read_csv('full_data_clean.csv')
 
-for col in num_cols:
-    parkvisits[col] = pd.to_numeric(
-        parkvisits[col].astype(str).str.replace(',', ''), errors='coerce')
+X = data.drop(columns=['SDI', 'n_observations', 'n_species'])
+y = data['SDI']
 
-visit_features = (parkvisits
-                  .groupby('ParkName')
-                  .agg(
-                      mean_recreation_visitors = ('RecreationVisitors', 'mean'),
-                      mean_recreation_hours    = ('RecreationHours', 'mean'),
-                      mean_tent_campers        = ('TentCampers', 'mean'),
-                      mean_rv_campers          = ('RVCampers', 'mean'),
-                      mean_backcountry         = ('Backcountry', 'mean'),
-                  )
-                  .reset_index())
+X_train, X_val, y_train, y_val = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
 
-# --- 2. Join everything ---
-# assumes df already has columns: UnitCode, ParkName, SDI
-df = (df
-      .merge(traffic_features, on='UnitCode', how='left')
-      .merge(visit_features,   on='ParkName', how='left'))
+# ── 2. Model definition ───────────────────────────────────────────────────────
+# AutoResearch: modify anything in this section.
+# Allowed: model type, hyperparameters, feature selection, preprocessing.
+# NOT allowed: changing val_rmse / val_r2 calculation below.
 
-# --- 3. Define features and target ---
-feature_cols = [
-    'mean_traffic',
-    'max_traffic',
-    'total_traffic',
-    'mean_recreation_visitors',
-    'mean_recreation_hours',
-    'mean_tent_campers',
-    'mean_rv_campers',
-    'mean_backcountry',
-]
-
-df_model = df[feature_cols + ['SDI']].dropna()
-X = df_model[feature_cols]
-y = df_model['SDI']
-
-print(f"Modeling on {len(df_model)} parks")
-print(f"Features: {feature_cols}")
-
-# --- 4. Baseline linear model ---
-model = Pipeline([
+pipeline = Pipeline([
     ('scaler', StandardScaler()),
-    ('lr',     LinearRegression())
+    ('model',  LinearRegression())
 ])
 
-# Cross-validated R² and RMSE
-r2_scores   = cross_val_score(model, X, y, cv=5, scoring='r2')
-rmse_scores = cross_val_score(model, X, y, cv=5,
-                              scoring='neg_root_mean_squared_error')
+param_grid = {
+    'model__fit_intercept': [True, False],
+    'model__positive':      [False],
+}
 
-print(f"\n--- Baseline LinearRegression ---")
-print(f"val_r2:   {r2_scores.mean():.4f} ± {r2_scores.std():.4f}")
-print(f"val_rmse: {(-rmse_scores).mean():.4f} ± {(-rmse_scores).std():.4f}")
+grid_search = GridSearchCV(
+    pipeline,
+    param_grid,
+    cv=5,
+    scoring='neg_root_mean_squared_error',
+    n_jobs=-1,
+    verbose=0,
+)
 
-# Fit on full data to inspect coefficients
-model.fit(X, y)
-coef_df = (pd.DataFrame({'feature': feature_cols,
-                          'coefficient': model.named_steps['lr'].coef_})
-             .sort_values('coefficient', key=abs, ascending=False))
-print(f"\nCoefficients:\n{coef_df.to_string(index=False)}")
+# ── 3. Fit ────────────────────────────────────────────────────────────────────
+fit_start = time.time()
+grid_search.fit(X_train, y_train)
+fit_seconds = time.time() - fit_start
+
+# ── 4. Evaluate — DO NOT MODIFY ───────────────────────────────────────────────
+best_model  = grid_search.best_estimator_
+y_pred      = best_model.predict(X_val)
+val_rmse    = np.sqrt(mean_squared_error(y_val, y_pred))
+val_r2      = r2_score(y_val, y_pred)
+total_seconds = time.time() - start_wall
+
+# ── 5. Print summary — DO NOT MODIFY ─────────────────────────────────────────
+print("---")
+print(f"val_rmse:      {val_rmse:.6f}")
+print(f"val_r2:        {val_r2:.6f}")
+print(f"best_params:   {grid_search.best_params_}")
+print(f"fit_seconds:   {fit_seconds:.1f}")
+print(f"total_seconds: {total_seconds:.1f}")
+print(f"num_features:  {X_train.shape[1]}")
+print(f"num_parks:     {len(X_train) + len(X_val)}")
+print(f"model_type:    {type(best_model.named_steps['model']).__name__}")
