@@ -2,3 +2,9 @@ commit	val_rmse	val_r2	status	model_type	description
 0893195	1170.517705	-2941740.956822	keep	LinearRegression	baseline with median imputation for NaN
 c55f6b7	0.576944	0.285312	discard	Ridge alpha=100	Ridge regression; huge rmse improvement but val_r2=0.285 < 0.85 threshold
 afaed1c	0.566529	0.310884	discard	HistGradientBoostingRegressor lr=0.05 depth=3 iter=100	HGB; marginal rmse gain over Ridge but val_r2=0.311 < 0.85
+9e9e6d9	0.654973	0.078923	discard	Lasso alpha=0.1	Lasso wider range; worse than Ridge, best alpha=0.1, val_r2=0.079 < 0.85
+1138160	0.640322	0.119669	discard	ElasticNet alpha=1 l1_ratio=0.1	ElasticNet wider grid; best params near-Ridge (l1_ratio=0.1), val_r2=0.120 < 0.85
+939754d	0.719819	-0.112489	discard	PolynomialFeatures+Ridge alpha=500	Poly degree=2 interactions; worse than plain Ridge, interaction noise outweighs signal
+4da78d9	0.633819	0.137461	discard	RandomForestRegressor n=200 depth=None max_features=0.5	RF; best val_r2 so far after HGB but still 0.137 < 0.85
+f130887	0.583874	0.268041	discard	TransformedTargetRegressor log1p+Ridge alpha=100	Log transform on SDI; marginal vs plain Ridge, val_r2=0.268 < 0.85
+92e1827	0.569386	0.303914	discard	SelectKBest k=30 + Ridge alpha=100	Best rmse so far (ties HGB); k=30 of 92 features, val_r2=0.304 < 0.85

@@ -1,9 +1,333 @@
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
+/Users/isabellawoods/anaconda3/envs/vscode_env/lib/python3.11/site-packages/sklearn/impute/_base.py:641: UserWarning: Skipping features without any observed values: ['visit_covid_impact' 'backcountry_covid_impact']. At least one non-missing value is needed for imputation with strategy='median'.
+  warnings.warn(
 ---
-val_rmse:      0.566529
-val_r2:        0.310884
-best_params:   {'model__learning_rate': 0.05, 'model__max_depth': 3, 'model__max_iter': 100}
-fit_seconds:   4.1
-total_seconds: 4.1
+val_rmse:      0.569386
+val_r2:        0.303914
+best_params:   {'model__alpha': 100, 'select__k': 30}
+fit_seconds:   2.1
+total_seconds: 2.2
 num_features:  92
 num_parks:     152
-model_type:    HistGradientBoostingRegressor
+model_type:    Ridge

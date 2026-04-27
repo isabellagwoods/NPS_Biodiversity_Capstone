@@ -7,7 +7,8 @@ Metric: val_rmse (lower is better). DO NOT change the metric.
 import time
 import numpy as np
 import pandas as pd
-from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import Ridge
+from sklearn.feature_selection import SelectKBest, f_regression
 from sklearn.model_selection import train_test_split, GridSearchCV, cross_val_score
 from sklearn.preprocessing import StandardScaler
 from sklearn.impute import SimpleImputer
@@ -35,13 +36,14 @@ X_train, X_val, y_train, y_val = train_test_split(
 
 pipeline = Pipeline([
     ('imputer', SimpleImputer(strategy='median')),
-    ('scaler', StandardScaler()),
-    ('model',  LinearRegression())
+    ('scaler',  StandardScaler()),
+    ('select',  SelectKBest(score_func=f_regression, k=30)),
+    ('model',   Ridge(alpha=100)),
 ])
 
 param_grid = {
-    'model__fit_intercept': [True, False],
-    'model__positive':      [False],
+    'select__k':    [30],
+    'model__alpha': [100],
 }
 
 grid_search = GridSearchCV(
