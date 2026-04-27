@@ -1,0 +1,4 @@
+commit	val_rmse	val_r2	status	model_type	description
+0893195	1170.517705	-2941740.956822	keep	LinearRegression	baseline with median imputation for NaN
+c55f6b7	0.576944	0.285312	discard	Ridge alpha=100	Ridge regression; huge rmse improvement but val_r2=0.285 < 0.85 threshold
+afaed1c	0.566529	0.310884	discard	HistGradientBoostingRegressor lr=0.05 depth=3 iter=100	HGB; marginal rmse gain over Ridge but val_r2=0.311 < 0.85
