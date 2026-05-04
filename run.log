@@ -1,0 +1,35 @@
+============================================================
+Loading data...
+  Park-level:  (152, 100)  (target: SDI)
+  Monthly:     (10393, 13)  (target: SDI_monthly)
+  Parks in monthly: 150
+  Year range:  1930 – 2026
+
+Stage 1 split: 121 train / 31 val parks
+Stage 1 fit done in 0.0s
+Stage 2: 9,957 clean rows, 13 features
+Stage 2 fit done in 2.0s  (7965 train / 1992 val)
+
+============================================================
+RESULTS
+s1_val_rmse:   0.644141
+s1_val_r2:     0.109138
+s1_cv_rmse:    0.720135
+s2_val_rmse:   0.473580
+s2_val_r2:     0.782315
+total_seconds: 2.1
+s1_model:      Ridge
+s2_model:      HistGradientBoostingRegressor
+s1_n_features: 11
+s2_n_features: 13
+============================================================
+
+commit: c4a542d
+Agent: append result row to results.tsv (see program.md)
+Saved: outputs/park_residuals.csv
+Saved: outputs/residual_diagnostics.png
+Saved: outputs/metric_over_time.png
+Saved: outputs/experiment_result_matrix.csv
+
+Done.
+

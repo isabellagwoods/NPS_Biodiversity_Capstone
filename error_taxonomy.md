@@ -1,0 +1,13 @@
+# Error Taxonomy — NPS Biodiversity SDI Prediction
+
+| Error Type | Description | How to Detect | Fix |
+|------------|-------------|---------------|-----|
+| Fill value contamination (positive) | MODIS fill values +32766 (GPP), +9999 (soil moisture range), +3276 (ET) are not caught by the `< -100` filter in Section 1, injecting huge noise into features | `park[feat].max() > 1000` for satellite cols; model R² near 0 despite many features | In Section 2, explicitly exclude known fill-contaminated cols: `avg_GPP`, `max_GPP`, `avg_ET`, `max_ET`, `soil_moisture_range` |
+| String feature in numeric pipeline | `lc_type` column contains strings ('Open Shrubland', 'Cropland') and is included via the `lc_*` wildcard, crashing StandardScaler | `ValueError: could not convert string to float` | Filter `stage1_features` to `park.select_dtypes(include='number').columns` |
+| Underfitting (Stage 1) | Ecological features have max |r|=0.30 with SDI; even the best linear model yields R²≈0.11 with 121 training parks | `s1_val_rmse > 0.50`, `s1_val_r2 < 0.15` | Try higher regularization (Ridge alpha=100); SelectKBest to drop noisy features; ultimately limited by feature informativeness |
+| High-regularization ceiling | Ridge alpha sweep showed optimum at 100; alpha=1000 overshoots toward predicting the mean | val_rmse increases after alpha=100 | Stay at alpha=100; switch model class to capture non-linearity |
+| Overfitting with small n (Stage 1) | RandomForest and HistGBM overfit on 121 training parks even with max_depth=5 | val_rmse >> train_rmse; R² < 0 on val | Use strong regularization (Ridge); prefer low-variance models for park-level data |
+| Stage 2 linear model inadequacy | Ridge on 10k monthly rows yields R²=0.33 — misses non-linear visitation × time interactions | `s2_val_rmse > 0.80` with Ridge; much better with tree model | Use HistGradientBoostingRegressor which handles sparse NaN and non-linearity natively |
+| NaN in human features | `visit_covid_impact` and `backcountry_covid_impact` are entirely NaN in many parks, contributing zero signal | `corr()` returns NaN for the feature | Drop from `stage2_human_features` |
+| Data sparsity ceiling (Stage 2) | SDI_monthly std ≈ 1.01; achieving RMSE=0.20 requires explaining 96% of variance — far beyond what human/time features provide | `s2_val_rmse` plateaus despite tuning; R² stuck at ~0.78 | Would require additional features (park-level fixed effects, weather, elevation) not in current dataset |
+| CV score pessimism (Stage 1) | 5-fold CV RMSE (0.72) consistently higher than single val split (0.64) due to tiny n; cross-val folds lose park diversity | cv_rmse >> val_rmse | Not a bug — reflects true variance; prefer val_rmse as primary metric |

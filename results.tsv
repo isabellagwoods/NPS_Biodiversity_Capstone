@@ -1,0 +1,16 @@
+commit	s1_val_rmse	s1_val_r2	s1_cv_rmse	s2_val_rmse	s2_val_r2	s1_model	s2_model	total_seconds	status	description
+dae3c49	0.696955	-0.042937	0.760973	0.831244	0.329346	Ridge	Ridge	0.1	keep	baseline Ridge(alpha=1.0)+SimpleImputer(median); fix string features
+3b54bbd	0.833555	-0.491823	0.808825	0.831244	0.329346	HistGradientBoostingRegressor	Ridge	0.9	discard	Stage1 HistGBM(max_iter=200) — worse than Ridge baseline
+4d5bbdd	0.661187	0.061363	0.739144	0.831244	0.329346	Ridge	Ridge	0.1	keep	trim stage1 fill-value cols — R2 now positive
+b9026b4	0.662007	0.059033	0.740925	0.831244	0.329346	Ridge	Ridge	0.1	discard	Ridge(alpha=0.1) — no improvement vs alpha=1.0
+2e8fc7d	0.655062	0.078673	0.732195	0.831244	0.329346	Ridge	Ridge	0.1	keep	Ridge(alpha=10) — small improvement
+731aea2	0.648115	0.098111	0.721184	0.831244	0.329346	Ridge	Ridge	0.1	keep	Ridge(alpha=100) — monotone improvement continues
+006204a	0.670116	0.035841	0.723252	0.831244	0.329346	Ridge	Ridge	0.1	discard	Ridge(alpha=1000) — worse than alpha=100; optimal around 100
+e90fbd6	0.718993	-0.109935	0.773802	0.831244	0.329346	RandomForestRegressor	Ridge	0.1	discard	RandomForest(n=100,max_depth=5) — worse than Ridge; overfitting with small n
+3afcb79	0.648115	0.098111	0.721184	0.477557	0.778644	Ridge	HistGradientBoostingRegressor	1.4	keep	Stage2 HistGBM(max_iter=200) — huge improvement 0.831→0.477
+5d6f43d	0.648115	0.098111	0.721184	0.475134	0.780885	Ridge	HistGradientBoostingRegressor	2.3	keep	Stage2 HistGBM(max_iter=500) — marginal gain
+26af516	0.655808	0.076573	0.722577	0.475134	0.780885	Ridge	HistGradientBoostingRegressor	0.1	discard	log1p target transform — slightly worse than no transform
+985c25f	0.644141	0.109138	0.720135	0.475134	0.780885	Ridge	HistGradientBoostingRegressor	0.1	keep	SelectKBest(k=8)+Ridge(alpha=100) — small Stage 1 gain
+7d48cf3	0.648750	0.096344	0.720771	0.475134	0.780885	Ridge	HistGradientBoostingRegressor	0.1	discard	SelectKBest(k=6) — worse than k=8
+c4a542d	0.644141	0.109138	0.720135	0.473580	0.782315	Ridge	HistGradientBoostingRegressor	2.6	keep	Stage2 trim to top-8 human features — marginal gain
+c808cdf	0.644141	0.109138	0.720135	0.477581	0.778622	Ridge	HistGradientBoostingRegressor	2.8	discard	HistGBM lr=0.05 — worse than default lr=0.1
