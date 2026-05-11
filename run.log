@@ -1,0 +1,28 @@
+============================================================
+Loading data...
+  Rarefied dataset (N=50): (8824, 33)
+  8,824 rows  |  6,979 train / 1,845 val
+  108 train parks / 27 val parks
+
+Model fit: 0.1s  |  Ridge
+
+============================================================
+RESULTS
+s1_val_rmse:   0.388727
+s1_val_r2:     0.474089
+s1_cv_rmse:    0.262424
+s2_val_rmse:   nan
+s2_val_r2:     nan
+total_seconds: 0.5
+s1_model:      Ridge
+s2_model:      single-stage
+n_features:    26 numeric + 1 categorical
+============================================================
+
+commit: bbe02cb
+Agent: append result row to results.tsv (see program.md)
+Saved: outputs/residual_diagnostics.png
+Saved: outputs/metric_over_time.png
+Saved: outputs/experiment_result_matrix.csv
+
+Done.

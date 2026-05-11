@@ -1,0 +1,7 @@
+commit	experiment	target	n_train	n_val	val_rmse	val_r2	cv_rmse	total_seconds	status	notes
+da626f9	A_taxon_sdi	SDI_group	1159	303	0.713792	0.767882	0.650398	6.2	keep	Structure A — 1462 park×group rows vs 152 parks; R2=0.77 is best yet; taxon_group one-hot is strong predictor
+4577733	B_monthly_geo	SDI_monthly	4340	1212	0.946974	0.308612	0.816334	0.1	keep	Structure B — adding region one-hot + lat/lon to monthly; R2=0.31 modest gain; geography helps in CV not val
+fec3156	C_firstdiff	delta_SDI	4219	1184	0.610935	0.049165	0.615927	0.1	keep	Structure C — ΔSDI target; RMSE=0.611 but R2=0.05 (delta_SDI ≈ white noise — linear predictors explain little change)
+75c8cd3	D_yearly	SDI_yearly	638	165	0.629240	0.615239	0.552601	0.1	keep	Structure D — yearly aggregation; R2=0.62 better than monthly (0.31); annual avg removes seasonal noise, improves linear signal
+93380cc	E_lag	SDI_monthly	4219	1184	0.592664	0.596008	0.578650	0.1	keep	Structure E — AR(1) lag; R2=0.60 vs 0.31 without lag; prior month is the strongest linear predictor of biodiversity
+3f3285e	F_taxon_monthly	SDI_group_monthly	21743	6613	0.442689	0.844358	0.391944	11.6	keep	Structure F — 28k taxon×month×park rows; R2=0.844 is best result; taxon_group + time + ecology = strong linear signal

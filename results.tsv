@@ -1,0 +1,35 @@
+commit	s1_val_rmse	s1_val_r2	s1_cv_rmse	s2_val_rmse	s2_val_r2	s1_model	s2_model	total_seconds	status	description
+dae3c49	0.696955	-0.042937	0.760973	0.831244	0.329346	Ridge	Ridge	0.1	keep	baseline Ridge(alpha=1.0)+SimpleImputer(median); fix string features
+3b54bbd	0.833555	-0.491823	0.808825	0.831244	0.329346	HistGradientBoostingRegressor	Ridge	0.9	discard	Stage1 HistGBM(max_iter=200) — worse than Ridge baseline
+4d5bbdd	0.661187	0.061363	0.739144	0.831244	0.329346	Ridge	Ridge	0.1	keep	trim stage1 fill-value cols — R2 now positive
+b9026b4	0.662007	0.059033	0.740925	0.831244	0.329346	Ridge	Ridge	0.1	discard	Ridge(alpha=0.1) — no improvement vs alpha=1.0
+2e8fc7d	0.655062	0.078673	0.732195	0.831244	0.329346	Ridge	Ridge	0.1	keep	Ridge(alpha=10) — small improvement
+731aea2	0.648115	0.098111	0.721184	0.831244	0.329346	Ridge	Ridge	0.1	keep	Ridge(alpha=100) — monotone improvement continues
+006204a	0.670116	0.035841	0.723252	0.831244	0.329346	Ridge	Ridge	0.1	discard	Ridge(alpha=1000) — worse than alpha=100; optimal around 100
+e90fbd6	0.718993	-0.109935	0.773802	0.831244	0.329346	RandomForestRegressor	Ridge	0.1	discard	RandomForest(n=100,max_depth=5) — worse than Ridge; overfitting with small n
+3afcb79	0.648115	0.098111	0.721184	0.477557	0.778644	Ridge	HistGradientBoostingRegressor	1.4	keep	Stage2 HistGBM(max_iter=200) — huge improvement 0.831→0.477
+5d6f43d	0.648115	0.098111	0.721184	0.475134	0.780885	Ridge	HistGradientBoostingRegressor	2.3	keep	Stage2 HistGBM(max_iter=500) — marginal gain
+26af516	0.655808	0.076573	0.722577	0.475134	0.780885	Ridge	HistGradientBoostingRegressor	0.1	discard	log1p target transform — slightly worse than no transform
+985c25f	0.644141	0.109138	0.720135	0.475134	0.780885	Ridge	HistGradientBoostingRegressor	0.1	keep	SelectKBest(k=8)+Ridge(alpha=100) — small Stage 1 gain
+7d48cf3	0.648750	0.096344	0.720771	0.475134	0.780885	Ridge	HistGradientBoostingRegressor	0.1	discard	SelectKBest(k=6) — worse than k=8
+c4a542d	0.644141	0.109138	0.720135	0.473580	0.782315	Ridge	HistGradientBoostingRegressor	2.6	keep	Stage2 trim to top-8 human features — marginal gain
+c808cdf	0.644141	0.109138	0.720135	0.477581	0.778622	Ridge	HistGradientBoostingRegressor	2.8	discard	HistGBM lr=0.05 — worse than default lr=0.1
+b54de58	0.653716	0.107614	0.720135	0.936023	-0.033197	Ridge	HistGradientBoostingRegressor	3.3	keep	2021+/park-split baseline — SelectKBest(k=8)+Ridge(alpha=100) Stage1; HistGBM(500) Stage2
+cd170a2	0.654275	0.106087	0.720247	0.936023	-0.033197	Ridge	HistGradientBoostingRegressor	2.6	discard	PCA(n=5)+Ridge Stage1 — marginally worse than SelectKBest baseline (0.654 vs 0.654)
+2ce6948	0.658365	0.094876	0.721328	0.936023	-0.033197	Ridge	HistGradientBoostingRegressor	2.5	discard	PCA(n=8)+Ridge Stage1 — worse than n=5 and baseline; more components hurt
+f861282	0.654761	0.104758	0.718283	0.936023	-0.033197	Ridge	HistGradientBoostingRegressor	2.6	discard	PCA(n=3)+Ridge Stage1 — slightly worse than baseline; best CV of PCA variants
+0996b94	0.654275	0.106087	0.720247	1.029077	-0.248836	Ridge	HistGradientBoostingRegressor	2.9	discard	PCA(n=5) Stage1+Stage2 — Stage2 worse (PCA loses critical feature signal for park generalization)
+d65b62e	0.692817	-0.002333	0.728246	0.936023	-0.033197	Ridge	HistGradientBoostingRegressor	2.3	discard	KernelPCA(n=5,rbf)+Ridge Stage1 — much worse; nonlinear reduction hurts with small n=152 parks
+236e82d	0.659575	0.091545	0.721757	0.936023	-0.033197	Ridge	HistGradientBoostingRegressor	2.5	discard	SelectKBest(k=10)+PCA(n=5)+Ridge Stage1 — worse than SelectKBest alone; PCA after filter loses discriminative directions
+cf4cca2	0.659225	0.092508	0.721549	0.936023	-0.033197	Ridge	HistGradientBoostingRegressor	2.9	discard	PCA(0.95var)+Ridge Stage1 — worse than baseline; auto 95% variance still loses key signal
+b70e695	0.653716	0.107614	0.720135	0.936023	-0.033197	Ridge	HistGradientBoostingRegressor	2.7	keep	confirm best config — SelectKBest(k=8)+Ridge(alpha=100); dim-reduction study complete
+04434f5	0.334240	0.611188	0.304210	nan	nan	Ridge	single-stage	0.1	keep	exp032 baseline Ridge(alpha=100) — single-stage rarefied taxon SDI
+163b115	0.334572	0.610417	0.288099	nan	nan	Ridge	single-stage	0.2	discard	exp033 Ridge(alpha=10) — marginally worse than alpha=100
+51babb3	0.375614	0.508974	0.363112	nan	nan	Ridge	single-stage	0.1	discard	exp034 Ridge(alpha=500) — over-regularized, substantially worse
+4015334	0.405512	0.427693	0.398100	nan	nan	Ridge	single-stage	0.1	discard	exp035 Ridge(alpha=1000) — further degraded; optimal alpha=100 confirmed
+5f21ce3	0.334289	0.611075	0.305437	nan	nan	Ridge	single-stage	0.1	discard	exp036 PCA(n=15)+Ridge — identical to baseline; PCA adds no signal
+ac27209	0.326281	0.629484	0.308746	nan	nan	Ridge	single-stage	0.1	keep	exp037 PCA(n=10)+Ridge — new best: val_rmse 0.334→0.326, R2 0.611→0.629
+f4df94c	0.334101	0.611513	0.305197	nan	nan	Ridge	single-stage	0.1	discard	exp038 PCA(n=20)+Ridge — no improvement over baseline; n=10 is sweet spot
+0ad72cf	0.337580	0.603378	0.308464	nan	nan	ElasticNet	single-stage	0.2	discard	exp039 ElasticNet(alpha=0.01,l1=0.5) — marginally worse than Ridge
+65be0a2	0.330861	0.619011	0.289594	nan	nan	Lasso	single-stage	0.4	keep	exp040 Lasso(alpha=0.001) — better than Ridge baseline; good CV RMSE
+bbe02cb	0.388727	0.474089	0.262424	nan	nan	Ridge	single-stage	0.5	discard	exp041 PolynomialFeatures(degree=2,interaction)+Ridge — overfit to train parks
