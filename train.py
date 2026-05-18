@@ -202,26 +202,56 @@ print(f"  {len(TRAIN_PARKS)} train parks / {len(VAL_PARKS)} val parks")
 #   Round 1: alpha search  (033–035)
 #   Round 2: PCA n_components (036–038)
 #   Round 3: model type / interaction features (039–041)
+#   Round 4: temporal lag + tree models (042–046)
 
-num_features = ALL_NUM   # change to a subset to test feature trimming
+# ── Exp 070: Add taxon×year_norm interactions — taxon-specific temporal trends ──
+# Base: exp069 (val=0.2435). Change: add tg_{taxon}_year for each taxon group.
+# Some taxa may be increasing/decreasing over 2021-2025 (recovery from pandemic,
+# land management changes, climate shift). Single year_norm coefficient applies
+# one trend to all taxa; per-taxon slopes allow taxon-specific trajectories.
 
-# BEST — PCA(n=10) inside numeric sub-pipeline + Ridge(alpha=100)
-# PCA compresses 26 correlated numeric features to 10 orthogonal components;
-# taxon_group one-hot kept separate (not PCA'd).
-# val_rmse=0.326, val_r2=0.629 (Exp 037 — best of three controlled rounds)
+df = df.sort_values(['park_name', 'taxon_group', 'year', 'month']).copy()
+_grp = df.groupby(['park_name', 'taxon_group'])['SDI_rarefied']
+df['SDI_lag1']  = _grp.shift(1)
+df['SDI_lag2']  = _grp.shift(2)
+df['SDI_lag3']  = _grp.shift(3)
+df['SDI_lag6']  = _grp.shift(6)
+df['SDI_lag9']  = _grp.shift(9)
+df['SDI_lag12'] = _grp.shift(12)
+df['SDI_cumean'] = _grp.transform(lambda s: s.expanding().mean().shift(1))
+df['SDI_month_cumean'] = (df.groupby(['park_name', 'taxon_group', 'month'])['SDI_rarefied']
+                          .transform(lambda s: s.expanding().mean().shift(1)))
+df['SDI_dev']   = df['SDI_lag1'] - df['SDI_month_cumean']
+df['SDI_dev12'] = df['SDI_lag12'] - df['SDI_month_cumean']
+df['n_prior_months'] = df.groupby(['park_name', 'taxon_group']).cumcount()
+_tg_dummies = pd.get_dummies(df['taxon_group'], prefix='tg', dtype=float)
+for _tgc in _tg_dummies.columns:
+    df[f'{_tgc}_sin']  = _tg_dummies[_tgc] * df['month_sin']
+    df[f'{_tgc}_cos']  = _tg_dummies[_tgc] * df['month_cos']
+    df[f'{_tgc}_year'] = _tg_dummies[_tgc] * df['year_norm']  # taxon-specific trend
+_tg_interact_feats = [c for c in df.columns if c.startswith('tg_') and
+                      (c.endswith('_sin') or c.endswith('_cos') or c.endswith('_year'))]
+df = df.dropna(subset=['SDI_lag1', 'SDI_lag2', 'SDI_lag3', 'SDI_lag6', 'SDI_lag9', 'SDI_lag12'])
+train_df = df[df['park_name'].isin(TRAIN_PARKS)].copy()
+val_df   = df[df['park_name'].isin(VAL_PARKS)].copy()
+y_train  = train_df[TARGET].values
+y_val    = val_df[TARGET].values
+num_features = ALL_NUM + ['SDI_lag1', 'SDI_lag2', 'SDI_lag3', 'SDI_lag6', 'SDI_lag9',
+                           'SDI_lag12', 'SDI_cumean', 'SDI_month_cumean', 'SDI_dev',
+                           'SDI_dev12', 'n_prior_months'] + _tg_interact_feats
+
 model = Pipeline([
     ('prep', ColumnTransformer([
         ('num', Pipeline([
             ('imp', SimpleImputer(strategy='median')),
             ('sc',  StandardScaler()),
-            ('pca', PCA(n_components=10)),
         ]), num_features),
         ('cat', Pipeline([
             ('imp', SimpleImputer(strategy='constant', fill_value='Unknown')),
             ('ohe', OneHotEncoder(handle_unknown='ignore', sparse_output=False)),
         ]), CAT_FEATS),
     ])),
-    ('model', Ridge(alpha=100)),
+    ('model', ElasticNet(alpha=0.001, l1_ratio=0.2, max_iter=10000)),
 ])
 
 

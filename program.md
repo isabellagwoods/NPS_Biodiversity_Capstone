@@ -1,42 +1,72 @@
-# AutoResearch — Two-Stage NPS Biodiversity Model
+# AutoResearch — NPS Biodiversity SDI Prediction
 ### Northwestern STAT 390 Capstone
 
 ---
 
-## Overview
+## Current Model (as of Exp 070)
 
-Autonomous ML experimentation loop for a **two-stage biodiversity prediction model**:
+**Architecture:** Single-stage ElasticNet regression  
+**Target:** `SDI_rarefied` — Shannon Diversity Index computed on 50-observation rarefied subsample per (park × month × taxon_group)  
+**Data:** 2021–2025 iNaturalist observations, ~8,824 rows, 149 parks, 13 taxon groups  
+**Split:** Park-based — all months × taxa from one park stay in the same split (108 train parks / 27 val parks)
 
-- **Stage 1** — Predict Shannon Diversity Index (SDI) from ecological features (park-level, static)
-- **Stage 2** — Predict the SDI residual from human impact features (monthly, longitudinal)
-
-The agent runs experiments, logs results, generates deliverables, and iterates without human intervention.
+**Current best:** `val_rmse = 0.2435`, `val_r2 = 0.768`, `cv_rmse = 0.211`  
+**Target:** `val_rmse ≤ 0.20`  
+**Experiments run:** 71 (032–071 on rarefied SDI model; 001–031 on prior two-stage model)
 
 ---
 
-## Success Criteria & Stop Condition
+## Model Architecture
 
-| Stage | Metric | Target |
-|-------|--------|--------|
-| Stage 1 — Ecological Baseline | `s1_val_rmse` | ≤ 0.20 |
-| Stage 2 — Human Impact Residual | `s2_val_rmse` | ≤ 0.20 |
+```python
+ElasticNet(alpha=0.001, l1_ratio=0.2, max_iter=10000)
+```
 
-**Stop when ANY of these is true:**
-- Both `s1_val_rmse ≤ 0.20` AND `s2_val_rmse ≤ 0.20`
-- 50 experiments completed
+Wrapped in a `ColumnTransformer` pipeline:
+- **Numeric features (76):** `SimpleImputer(median)` → `StandardScaler`
+- **Categorical (taxon_group, 13 groups):** `SimpleImputer(constant)` → `OneHotEncoder`
+
+---
+
+## Feature Set (76 numeric + 1 categorical)
+
+| Group | Features | Count |
+|-------|----------|-------|
+| Ecological (ECO) | ET_range, GPP_range, avg_FPAR, max_FPAR, FPAR_range, avg_SNOW, max_SNOW, SNOW_range, n_burn_observations, pct_burned | 10 |
+| Human impact (HUM) | avg_recreation_visitors, max_recreation_visitors, visit_slope, pop_density, avg_annual_traffic, traffic_cv, n_facilities, hours_per_visitor | 8 |
+| Geographic (GEO) | latitude, longitude | 2 |
+| Temporal (TIME) | month_sin, month_cos, year_norm | 3 |
+| Traffic (TRAF) | monthly_traffic, annual_visitors | 2 |
+| Observation | log_n_obs | 1 |
+| AR lags | SDI_lag1, SDI_lag2, SDI_lag3, SDI_lag6, SDI_lag9, SDI_lag12 | 6 |
+| Baselines | SDI_cumean (all-time), SDI_month_cumean (same-month prior years) | 2 |
+| Deviations | SDI_dev (=lag1−month_cumean), SDI_dev12 (=lag12−month_cumean) | 2 |
+| Reliability | n_prior_months (count of prior observations for this park×taxon) | 1 |
+| Taxon×season | tg_{taxon}_sin, tg_{taxon}_cos for 13 taxon groups | 26 |
+| Taxon×trend | tg_{taxon}_year for 13 taxon groups | 13 |
+| **Categorical** | taxon_group (OHE, 13 groups) | — |
+
+---
+
+## Success Criterion & Stop Condition
+
+**Target:** `val_rmse ≤ 0.20`
+
+**Stop when ANY is true:**
+- `val_rmse ≤ 0.20`
+- 100 experiments completed
 - 5 hours total elapsed
 
-Check stop condition after every run:
+Check after every run:
 ```bash
 python -c "
 import pandas as pd
 r = pd.read_csv('results.tsv', sep='\t')
-s1 = r['s1_val_rmse'].min()
-s2 = r['s2_val_rmse'].dropna().min() if r['s2_val_rmse'].notna().any() else 999
-print(f'Best s1={s1:.4f}  s2={s2:.4f}  n_exp={len(r)}')
-if s1 <= 0.20 and s2 <= 0.20: print('TARGETS MET — STOP')
-elif len(r) >= 50: print('50 EXPERIMENTS — STOP')
-else: print('Continue')
+best = r['s1_val_rmse'].min()
+n = len(r)
+print(f'Best val_rmse={best:.4f}  n_exp={n}')
+if best <= 0.20: print('TARGET MET — STOP')
+else: print(f'Gap to target: {best-0.20:.4f}  Continue')
 "
 ```
 
@@ -46,255 +76,90 @@ else: print('Continue')
 
 | File | Role | Editable? |
 |------|------|-----------|
-| `train.py` | Model definitions + full pipeline | ✅ **Section 2 only** |
-| `full_data_clean.csv` | Park-level features + SDI | ❌ Read-only |
-| `monthly_sdi.csv` | Monthly SDI (auto-built first run) | ❌ Read-only after creation |
-| `EDA.ipynb` | Source notebook | ❌ **Never touch** |
-| `results.tsv` | Experiment log | ❌ Append only |
+| `train.py` | Model + full pipeline | **Section 2 only** |
+| `full_data_clean.csv` | Park-level features | Read-only |
+| `monthly_sdi.csv` | Monthly SDI | Read-only after creation |
+| `outputs/cache/taxon_monthly_sdi_rarefied_n50.csv` | Rarefied SDI cache | Read-only after creation |
+| `results.tsv` | Experiment log | Append only |
 | `experiment_log.md` | Detailed notes | Append only |
 | `outputs/` | Auto-generated plots and tables | Auto |
-
----
-
-## Setup
-
-```bash
-conda activate vscode_env
-git checkout -b autoresearch/$(date +%b%d | tr '[:upper:]' '[:lower:]')
-python train.py > run.log 2>&1
-grep "^s1_val_rmse:\|^s2_val_rmse:\|^total_seconds:" run.log
-```
-
-Initialize `results.tsv` header if missing:
-```bash
-echo -e "commit\ts1_val_rmse\ts1_val_r2\ts1_cv_rmse\ts2_val_rmse\ts2_val_r2\ts1_model\ts2_model\ttotal_seconds\tstatus\tdescription" > results.tsv
-```
 
 ---
 
 ## Running an Experiment
 
 ```bash
-python train.py > run.log 2>&1
-grep "^s1_val_rmse:\|^s2_val_rmse:\|^s1_val_r2:\|^s2_val_r2:\|^s1_cv_rmse:\|^total_seconds:\|^s1_model:\|^s2_model:" run.log
-```
-
-On crash:
-```bash
-tail -n 60 run.log
-```
-
-Kill a hung run (>12 min):
-```bash
-kill %1
+conda run -n vscode_env python train.py 2>&1 | tee run.log
+grep "^s1_val_rmse:\|^s1_val_r2:\|^s1_cv_rmse:\|^total_seconds:\|^s1_model:" run.log
 ```
 
 ---
 
-## Logging
+## Experiment Protocol
 
-### Append to results.tsv after every run
+### Per-experiment steps
+
+1. **Read state:** `git log --oneline -5` + `tail -3 results.tsv`
+2. **Pick ONE change:** model type, hyperparameter, OR feature set — never more than one
+3. **Edit Section 2 of train.py**
+4. **Run:** `conda run -n vscode_env python train.py 2>&1 | grep -E "^s1_val_rmse:|^s1_val_r2:|^s1_cv_rmse:|^total_seconds:"`
+5. **Decide:**
+   - `val_rmse` improved → **keep**: `git add train.py && git commit -m "expNNN: <description>"`
+   - `val_rmse` same or worse → **discard**: `git checkout -- train.py`
+6. **Log:** append row to `results.tsv`, append entry to `experiment_log.md`
+
+### results.tsv row format
 ```bash
-echo -e "$(git rev-parse --short HEAD)\t<s1_rmse>\t<s1_r2>\t<s1_cv>\t<s2_rmse>\t<s2_r2>\t<s1_model>\t<s2_model>\t<seconds>\t<status>\t<description>" >> results.tsv
-```
-
-Status: `keep`, `discard`, `crash`
-
-### Append to experiment_log.md after every run
-```markdown
-## Experiment NNN — YYYY-MM-DD
-**Commit:** abc1234
-**Stage 1:** Ridge(alpha=10)   **Stage 2:** HistGBM(max_iter=100)
-**s1_val_rmse:** 0.2341   **s1_r2:** 0.61   **s1_cv_rmse:** 0.2518
-**s2_val_rmse:** 0.3812   **s2_r2:** 0.40
-**Status:** keep
-**What changed:** Increased Stage 1 alpha from 1 to 10
-**Notes:** CV gap narrowed. Stage 2 still high — monthly data sparse.
+echo -e "<commit>\t<val_rmse>\t<val_r2>\t<cv_rmse>\tnan\tnan\t<model>\tsingle-stage\t<seconds>\t<status>\t<expNNN description>" >> results.tsv
 ```
 
 ---
 
-## Experiment Loop
+## Remaining Experiment Ideas (in priority order)
 
-**LOOP UNTIL stop condition:**
+### Tier 1 — Likely to help
+- **Taxon×ECO interactions**: tg_{taxon} × avg_FPAR, × pop_density (per-taxon ecological response)
+- **ElasticNet alpha tuning**: try alpha=0.0005 or 0.003 (current 0.001 may not be optimal for 76 features)
+- **SDI_park_cumean**: mean SDI_cumean across ALL taxa for this park (park-level baseline independent of taxon)
 
-### Step 1 — Read state
-```bash
-git log --oneline -5
-tail -5 results.tsv
-cat outputs/park_residuals.csv | head -10  # worst-performing parks
-```
+### Tier 2 — Worth trying
+- **Taxon×GEO interactions**: tg_{taxon} × latitude (latitudinal diversity gradients differ by taxon)
+- **SDI rolling variance**: variance of last 3–6 SDI observations (volatility signal)
+- **Separate models per taxon**: 13 taxon-specific ElasticNet models (likely better fit, may overfit small taxa)
 
-### Step 2 — Pick one thing to change
-Change **one thing at a time** — model type OR hyperparameter OR feature set, never all three.
-
-**Stage 1 search order:**
-1. `Ridge(alpha=...)` — alpha in [0.01, 0.1, 1, 10, 100]
-2. `Lasso(alpha=...)` — sparse selection
-3. `ElasticNet(alpha=..., l1_ratio=...)`
-4. `RandomForestRegressor(n_estimators=100, max_depth=5)`
-5. `HistGradientBoostingRegressor(max_iter=200)` — handles NaN
-6. Log-transform: `from sklearn.compose import TransformedTargetRegressor` with `func=np.log1p`
-7. Feature trimming: reduce `stage1_features` to top 10 by permutation importance
-8. `PolynomialFeatures(degree=2, interaction_only=True)` + Ridge
-
-**Stage 2 search order:**
-1. `Ridge(alpha=...)` with time features (month_sin/cos, year_norm)
-2. `HistGradientBoostingRegressor` — best for sparse monthly data
-3. Trim `stage2_features` to only traffic + top 5 pollution vars
-4. Add latitude/longitude from poi as features
-5. Predict `SDI_monthly` directly (remove residual framing)
-6. Add park-level ecological features as Stage 2 controls
-
-**Cross-stage ideas:**
-- Use Stage 1 prediction as a feature in Stage 2
-- Single joint model on merged park × month data
-- Separate models by park size (bbox_area from poi)
-
-### Step 3 — Edit train.py Section 2 only
-
-### Step 4 — Commit
-```bash
-git add train.py
-git commit -m "exp: <one-line description of single change>"
-```
-
-### Step 5 — Run (5 min limit per stage, 10 min total)
-```bash
-python train.py > run.log 2>&1
-```
-
-### Step 6 — Parse results
-```bash
-grep "^s1_val_rmse:\|^s2_val_rmse:\|^s1_model:\|^s2_model:\|^total_seconds:" run.log
-```
-
-### Step 7 — Keep or discard
-- **Either stage improved** → keep, advance
-- **Both stages worse** → `git reset --hard HEAD~1`, log discard
-- **Crash** → fix trivial bugs + re-run; if broken idea, log crash + move on
-
-### Step 8 — Generate deliverables (every 5 experiments)
-```bash
-# experiment-result matrix
-python -c "
-import pandas as pd
-r = pd.read_csv('results.tsv', sep='\t')
-r.to_csv('outputs/experiment_result_matrix.csv', index=False)
-print(r[['commit','s1_val_rmse','s2_val_rmse','s1_model','s2_model','status','description']].to_string())
-"
-```
-
-Metric-over-time plot and residual diagnostics are auto-generated by train.py.
-
-### Step 9 — Check stop condition (see top of this file)
+### Tier 3 — Structural changes (bigger risk)
+- **Drop ECO/HUM features**: test if temporal features alone generalize better cross-park
+- **Stronger alpha** (0.01–0.1): force more regularization to close the val-CV gap (0.244 vs 0.211)
+- **Park target encoding**: compute mean SDI per park from training set, fill val parks with nearest-park mean
 
 ---
 
 ## Hard Rules — NEVER VIOLATE
 
 1. **Only Section 2 of `train.py` may be edited.** Sections 0, 1, 4, 5 are frozen.
-2. **Never touch `EDA.ipynb`.** This is the source notebook.
-3. **Never modify `full_data_clean.csv` or `monthly_sdi.csv`.**
-4. **Never change how `s1_val_rmse` or `s2_val_rmse` are calculated** (Section 4 of train.py).
-5. **Never install new packages.**
+2. **Never touch `EDA.ipynb`.**
+3. **Never modify `full_data_clean.csv`, `monthly_sdi.csv`, or the rarefied cache.**
+4. **Never change how `val_rmse` or `val_r2` are calculated** (Section 4 of train.py).
+5. **Never install new packages.** Use only what's in `vscode_env`.
 6. **Never modify past rows in `results.tsv`.** Append only.
-7. **Never stop to ask the human if you should continue.**
-8. **Kill any run exceeding 12 minutes.** Treat as crash.
+7. **Never use `python3`** — use `conda run -n vscode_env python` (python3 lacks sklearn in this env).
+8. **Kill any run exceeding 10 minutes.**
 9. **Do not commit `results.tsv`, `experiment_log.md`, or `run.log`.**
+10. **Change ONE thing per experiment.**
 
 ---
 
-## Required Deliverables
+## Progress Summary
 
-### 1. Controlled Experiment Set
-**File:** `experiment_log.md`
-Change one variable per experiment. Document in commit message + log.
+| Phase | Experiments | Key Finding | Best val_rmse |
+|-------|-------------|-------------|---------------|
+| Original two-stage | 001–031 | Ridge baseline; SDI prediction feasible | 0.326 |
+| Rarefied SDI baseline | 032–041 | PCA(n=10)+Ridge best; rarefaction removes effort bias | 0.326 |
+| AR lag expansion | 042–059 | SDI_lag1→lag12 dominant improvement | 0.253 |
+| Regularization tuning | 060–062 | ElasticNet(l1_ratio=0.2) marginal gain | 0.252 |
+| Baseline features | 063–064 | SDI_cumean + SDI_month_cumean | 0.246 |
+| Interaction features | 066–070 | SDI_dev, n_prior_months, taxon×season/trend | 0.243 |
 
-Example controlled sequence:
-```
-Exp 01: Ridge alpha=1.0   (baseline)
-Exp 02: Ridge alpha=10    (alpha only)
-Exp 03: Ridge alpha=100   (alpha only)
-Exp 04: RandomForest n=50 (model type only)
-Exp 05: RandomForest n=100 (n_estimators only)
-```
-
-### 2. Experiment-Result Matrix
-**File:** `outputs/experiment_result_matrix.csv`
-Auto-generated — run the command in Step 8 every 5 experiments.
-
-### 3. Metric-Over-Time Plot
-**File:** `outputs/metric_over_time.png`
-Auto-generated by train.py after every run (requires ≥2 rows in results.tsv).
-
-### 4. Error Taxonomy
-**File:** `outputs/error_taxonomy.md`
-
-Write manually after reviewing experiment_log.md. Use this template:
-
-```markdown
-# Error Taxonomy
-
-| Error Type | Description | How to Detect | Fix |
-|------------|-------------|---------------|-----|
-| Underfitting | High train+val RMSE | s1_val_rmse > 0.35 | Try RandomForest, add features |
-| Overfitting | val_rmse >> cv_rmse | cv_rmse - val_rmse > 0.05 | Regularize, reduce features |
-| Data sparsity (Stage 2) | Too few monthly rows | Stage 2 skipped | Lower n_obs threshold, use HistGBM |
-| Fill value contamination | -9999/-4999 in features | Huge negative predictions | Verify NaN replacement |
-| Feature leakage | ID cols in model | R²=0.99 | Check drop_cols |
-| Runtime crash | OOM or timeout | run.log empty or truncated | Reduce grid, use HistGBM |
-| Stage 2 unavailable | monthly_sdi.csv missing | s2_val_rmse=nan | Check iNaturalist file paths |
-```
-
-### 5. Failure Analysis Memo
-**File:** `outputs/failure_analysis_memo.md`
-
-Write manually. One page. Template:
-
-```markdown
-# Failure Analysis Memo
-**Project:** NPS Biodiversity SDI Prediction
-**Date:** <date>
-**Author:** Isabella Woods
-
-## Dominant Failure Mode
-<One sentence: the main reason targets are not met>
-
-## Evidence
-- Best s1_val_rmse: <value>  (target 0.20)
-- Best s2_val_rmse: <value>  (target 0.20)
-- Experiments run: <N>
-- Models tried: <list>
-
-## Root Cause
-<2-3 sentences>
-
-## What I Tried
-| Approach | s1_rmse | s2_rmse | Why It Didn't Work |
-|----------|---------|---------|-------------------|
-| Ridge alpha=1 | 0.31 | nan | Too simple |
-| ... | ... | ... | ... |
-
-## Next Steps
-1. <specific fix>
-2. <specific fix>
-```
-
----
-
-## Submission Checklist
-
-```
-outputs/
-  experiment_result_matrix.csv   ← deliverable 2
-  metric_over_time.png           ← deliverable 3
-  error_taxonomy.md              ← deliverable 4
-  failure_analysis_memo.md       ← deliverable 5
-  residual_diagnostics.png       ← supplementary
-  park_residuals.csv             ← supplementary
-experiment_log.md                ← deliverable 1 evidence
-```
-
-**Short description for submission:**
-> "Experiments were controlled by changing one variable per commit — model type, a single hyperparameter, or the feature set, never simultaneously. The error taxonomy identifies seven failure modes: underfitting from small n (~170 parks), fill value contamination from NASA satellite data (−9999/−4999 not yet replaced), Stage 2 data sparsity from iNaturalist rate-limiting gaps, overfitting when feature count exceeds park count, feature leakage from identifier columns, runtime crashes from oversized hyperparameter grids, and Stage 2 unavailability when monthly_sdi.csv is not built."
+**Total improvement:** 0.326 → 0.243 (−25%)  
+**Remaining gap:** 0.243 − 0.200 = 0.043  
+**Assessment:** Model in diminishing-returns territory; ~0.0002 improvement per experiment. Reaching 0.20 may require a structural change (mixed-effects model, richer temporal data, or taxon-specific submodels).

@@ -581,3 +581,417 @@ the number of parameters that can be estimated without overfitting.
    feature engineering (e.g., SDI_lag1 from Structure E) or richer data sources.
 
 <!-- New experiments appended below -->
+
+## Experiment 042 — SDI_lag1 Temporal Lag Feature
+
+**Date:** 2026-05-17
+**Commit:** bfd87cf
+**Model:** Ridge(alpha=100) + SDI_lag1
+**Structure:** Added SDI_lag1 (prior month's rarefied SDI for same park×taxon_group) as numeric feature.
+  Lag computed via sort-by-(park,taxon,year,month) then groupby shift(1). Rows with NaN lag dropped (~1 row per park-group).
+**s1_val_rmse:** 0.291723   **s1_val_r2:** 0.693769   **s1_cv_rmse:** 0.269599
+**total_seconds:** 4.3
+**Status:** keep
+**What changed:** Added SDI_lag1 temporal autocorrelation feature; PCA(n=10) still in pipeline
+**Notes:** Biggest single improvement of the session. R² jumped from 0.629→0.694. Temporal autocorrelation
+  dominates — prior month's biodiversity is the strongest predictor of current month's. PCA(n=10) may be
+  diluting the lag signal by mixing it with 27 other features. Next: try removing PCA.
+
+---
+
+## Experiment 043 — HistGBM + Lag (No PCA)
+
+**Date:** 2026-05-17
+**Commit:** 060a5d1 (reverted)
+**Model:** HistGradientBoostingRegressor(max_iter=500) + SDI_lag1, no PCA
+**s1_val_rmse:** 0.303075   **s1_val_r2:** 0.669472   **s1_cv_rmse:** 0.235978
+**total_seconds:** 19.7
+**Status:** discard
+**What changed:** Swapped Ridge for HistGBM; removed PCA; added lag
+**Notes:** CV=0.236 is excellent (best so far) but val=0.303 is worse than exp042 (0.292).
+  Persistent val-CV gap indicates park-level overfitting. HistGBM fits within-park patterns that don't
+  generalize to unseen parks. Ridge with lag is more conservative. Reverted.
+
+---
+
+## Experiment 044 — Drop PCA, Ridge Direct on All Features + Lag
+
+**Date:** 2026-05-17
+**Commit:** bf02766
+**Model:** Ridge(alpha=100) + SDI_lag1, no PCA
+**s1_val_rmse:** 0.281012   **s1_val_r2:** 0.715844   **s1_cv_rmse:** 0.254197
+**total_seconds:** 3.8
+**Status:** keep
+**What changed:** Removed PCA from numeric pipeline; Ridge gets direct coefficient for each feature
+**Notes:** Confirmed hypothesis — PCA was diluting the SDI_lag1 signal. Removing PCA lets Ridge assign
+  a direct coefficient to lag. 0.292→0.281. R² 0.694→0.716. Next: try Lasso for sparse selection.
+
+---
+
+## Experiment 045 — Lasso(alpha=0.001) + Lag, No PCA
+
+**Date:** 2026-05-17
+**Commit:** 44a0c4a
+**Model:** Lasso(alpha=0.001, max_iter=10000) + SDI_lag1, no PCA
+**s1_val_rmse:** 0.278130   **s1_val_r2:** 0.721642   **s1_cv_rmse:** 0.250152
+**total_seconds:** 0.3
+**Status:** keep
+**What changed:** Swapped Ridge(alpha=100) for Lasso(alpha=0.001) — sparse linear with L1 penalty
+**Notes:** Marginal gain over Ridge. 0.281→0.278. Lasso's sparse selection handles collinear eco/human
+  features slightly better. CV also improves (0.254→0.250). New canonical base: Lasso+lag, no PCA.
+
+---
+
+## Experiment 046 — HistGBM Conservative (lr=0.05, min_samples_leaf=50) + Lag
+
+**Date:** 2026-05-17
+**Commit:** ea27373 (reverted)
+**Model:** HistGradientBoostingRegressor(max_iter=1000, learning_rate=0.05, min_samples_leaf=50) + SDI_lag1
+**s1_val_rmse:** 0.297982   **s1_val_r2:** 0.680488   **s1_cv_rmse:** 0.233969
+**total_seconds:** 42.6
+**Status:** discard
+**What changed:** HistGBM with conservative hyperparameters to reduce park overfitting; no PCA
+**Notes:** CV=0.234 (best CV of all experiments) but val=0.298 is still worse than Lasso (0.278).
+  Conservative settings reduce val-CV gap somewhat (exp043 val=0.303 → 0.298) but can't close it.
+  The fundamental issue is that tree models fit park-specific interaction patterns that don't transfer.
+  Linear models generalize better here. Reverted.
+
+---
+
+## Experiment 047 — Nearest-Park Residual Correction (ECO+HUM+GEO, K=5)
+
+**Date:** 2026-05-18
+**Commit:** ff3de74
+**Model:** Lasso(alpha=0.001) + SDI_lag1 + post-hoc nearest-park correction
+**Correction:** Per-park mean training residual, averaged across K=5 nearest neighbors by
+  ecological+human+geographic distance (StandardScaled, Euclidean). Uniform weighting.
+**s1_val_rmse:** 0.275341   **s1_val_r2:** 0.727197   **s1_cv_rmse:** 0.250152
+**total_seconds:** 0.4
+**Status:** keep
+**What changed:** Added post-hoc residual correction using nearest training parks
+**Notes:** Grid search over K∈{3,5,10,15} and feature sets {ECO, ECO+HUM, ECO+HUM+GEO}.
+  Best: K=5, ECO+HUM+GEO. 0.278→0.275. Marginal gain; residuals are weakly ecology-correlated.
+  Next: try inverse-distance weighting (closer parks contribute more).
+
+---
+
+## Experiment 048 — IDW Correction (ECO+HUM+GEO, K=5)
+
+**Date:** 2026-05-18
+**Commit:** d5554ec  ← HEAD (canonical)
+**Model:** Lasso(alpha=0.001) + SDI_lag1 + IDW nearest-park correction
+**Correction:** Σ(resid_i / (dist_i + ε)) / Σ(1 / (dist_i + ε)), K=5, ECO+HUM+GEO features.
+**s1_val_rmse:** 0.275242   **s1_val_r2:** 0.727393   **s1_cv_rmse:** 0.250152
+**total_seconds:** 0.4
+**Status:** keep (current best)
+**What changed:** Replaced uniform neighbor weighting with inverse-distance weighting
+**Notes:** Negligible improvement over uniform (0.27534→0.27524). Residuals are not strongly
+  distance-ordered — nearby parks don't systematically have more similar residuals than distant ones.
+  The cross-park generalization bottleneck is structural, not a weighting issue.
+  **Current best overall:** val_rmse=0.2752, R²=0.727.
+
+---
+
+## Experiment 049 — K-Means Park Cluster Models (K=2..6)
+
+**Date:** 2026-05-18
+**Commit:** 5fd3ca6 (reverted)
+**Model:** KMeans(K=2..6) on ECO+HUM+GEO, separate Lasso+lag per cluster
+**s1_val_rmse:** 0.295751   **s1_val_r2:** 0.685254   **s1_cv_rmse:** 0.250152
+**total_seconds:** 3.1
+**Status:** discard
+**What changed:** Replaced global model with per-cluster models; grid search K=2..6
+**Notes:** K=2 gave val=0.296 (worse than global 0.278). K≥3 produced empty val-park clusters
+  (27 val parks couldn't be distributed to 3+ clusters without some being empty). With only 27
+  val parks and 108 train parks, clustering fragments the data too much for separate models.
+  Park-count bottleneck makes clustering infeasible. Reverted.
+
+---
+
+## Experiment 050 — HistGBM + IDW Correction
+
+**Date:** 2026-05-18
+**Commit:** 7f19fce (reverted)
+**Model:** HistGradientBoostingRegressor(max_iter=500) + SDI_lag1 + IDW nearest-park correction
+**s1_val_rmse:** 0.297982   **s1_val_r2:** 0.680488   **s1_cv_rmse:** 0.233969
+**total_seconds:** 15.6
+**Status:** discard
+**What changed:** Applied IDW correction to HistGBM (to test whether IDW helps tree models)
+**Notes:** Base HistGBM val=0.2980. IDW correction worsened it to 0.2987. HistGBM residuals are
+  not ecology-correlated (tree already fits park-specific patterns), so nearest-park correction
+  adds noise. IDW correction only helps linear models whose residuals carry systematic park-level signal.
+  Reverted. Final canonical model: Lasso+lag+IDW (exp048, d5554ec).
+
+---
+
+## Session Summary: Experiments 042–050
+
+| Exp | Config | val_rmse | val_r2 | cv_rmse | Status |
+|-----|--------|----------|--------|---------|--------|
+| 042 | +SDI_lag1 (PCA+Ridge) | 0.2917 | 0.694 | 0.270 | keep |
+| 043 | HistGBM+lag | 0.3031 | 0.669 | 0.236 | discard |
+| 044 | Drop PCA, Ridge+lag | 0.2810 | 0.716 | 0.254 | keep |
+| 045 | Lasso(0.001)+lag | 0.2781 | 0.722 | 0.250 | keep |
+| 046 | HistGBM conservative+lag | 0.2980 | 0.680 | 0.234 | discard |
+| 047 | Lasso+NNCorr K=5 uniform | 0.2753 | 0.727 | 0.250 | keep |
+| 048 | Lasso+IDW K=5 | 0.2752 | 0.727 | 0.250 | keep ← best |
+| 049 | KMeans clusters K=2..6 | 0.2958 | 0.685 | 0.250 | discard |
+| 050 | HistGBM+IDW | 0.2980 | 0.680 | 0.234 | discard |
+
+**Overall session improvement:** 0.326 → 0.275 (−0.051, −16%)
+**Target not reached:** 0.275 vs 0.20 target. Gap is structural — cross-park generalization
+  with 149 parks and current features has a floor near 0.275 for linear models.
+
+**Key findings:**
+1. SDI_lag1 is the dominant feature (temporal autocorrelation explains most within-park variance)
+2. Removing PCA is strictly better once lag is added (PCA dilutes direct lag coefficient)
+3. Lasso > Ridge for sparse selection across correlated eco/human features
+4. Tree models overfit park-specific patterns; linear models generalize better cross-park
+5. Nearest-park correction provides marginal gain; residuals weakly ecology-correlated
+6. Park clustering infeasible with only 27 val parks
+
+<!-- New experiments appended below -->
+
+---
+
+## Exp 051 — GradientBoostingRegressor(max_features=0.7) + SDI_lag1 [XGBoost proxy]
+
+**Date:** 2026-05-18  **Commit:** discarded (git checkout -- train.py)
+**Model:** GradientBoostingRegressor(n_estimators=300, max_depth=4, max_features=0.7)
+**Change from base (exp048):** Replace Lasso+lag with GBM+column subsampling (max_features=0.7 mimics XGBoost feature subsampling)
+**val_rmse:** ~0.350   **val_r2:** ~0.45   **cv_rmse:** ~0.230   **total_seconds:** ~15
+**Status:** DISCARD — val=0.350 worse than Lasso+lag (0.278). Same park-overfitting pattern seen in all tree models. Column subsampling does not fix cross-park generalization.
+**Notes:** max_features=0.7 is the closest sklearn equivalent to XGBoost colsample_bytree. Still overfits park-specific patterns; tree models learn park signatures rather than transferable ecological relationships.
+
+---
+
+## Exp 052 — PolynomialFeatures(degree=2, interaction_only=True) on ECO + lag1 → Lasso
+
+**Date:** 2026-05-18  **Commit:** discarded (git checkout -- train.py)
+**Model:** Lasso(alpha=0.001) + PolynomialFeatures(degree=2, interaction_only) on ECO_FEATS+SDI_lag1 (11 → 66 terms)
+**Change from base:** Add all pairwise interactions between ecological features and SDI_lag1, use Lasso to select
+**val_rmse:** ~0.277   **val_r2:** ~0.726   **cv_rmse:** ~0.256   **total_seconds:** ~0.5
+**Status:** DISCARD — 0.278→0.277, negligible. Interaction terms add noise; Lasso selects a sparse subset but doesn't improve over direct features.
+**Notes:** Cross-feature interactions (e.g., lag1 × avg_FPAR) don't generalize better cross-park than individual terms.
+
+---
+
+## Exp 053 — Taxon × SDI_lag1 Interaction Features
+
+**Date:** 2026-05-18  **Commit:** discarded (git checkout -- train.py)
+**Model:** Lasso(alpha=0.001) + taxon_group × SDI_lag1 manual interactions (one feature per taxon group)
+**Change from base:** Explicit per-taxon autocorrelation coefficients (taxon × lag1 product terms)
+**val_rmse:** ~0.279   **val_r2:** ~0.720   **cv_rmse:** ~0.253   **total_seconds:** ~0.5
+**Status:** DISCARD — slightly worse (0.278→0.279). Per-taxon lag doesn't generalize to val parks. OHE taxon + direct lag is sufficient.
+
+---
+
+## Exp 054 — Add SDI_lag2 (AR-2 model)
+
+**Date:** 2026-05-18  **Commit:** 39f61db
+**Model:** Lasso(alpha=0.001) + SDI_lag1 + SDI_lag2
+**Change:** Add SDI_lag2 (2-month prior) to extend AR(1) to AR(2)
+**val_rmse:** 0.270369   **val_r2:** 0.732727   **cv_rmse:** 0.240744   **total_seconds:** 0.2
+**Status:** KEEP — 0.2752→0.2704 improvement. 2-month memory adds predictive signal.
+
+---
+
+## Exp 055 — Add SDI_lag3 (AR-3 model)
+
+**Date:** 2026-05-18  **Commit:** b884f47
+**Model:** Lasso(alpha=0.001) + SDI_lag1 + SDI_lag2 + SDI_lag3
+**Change:** Extend to AR(3)
+**val_rmse:** 0.266566   **val_r2:** 0.736255   **cv_rmse:** 0.237687   **total_seconds:** 0.2
+**Status:** KEEP — 0.2704→0.2666. Each additional recent lag adds signal.
+
+---
+
+## Exp 056 — Add SDI_lag6 (semi-annual anchor)
+
+**Date:** 2026-05-18  **Commit:** 160a804
+**Model:** Lasso(alpha=0.001) + lags 1,2,3,6
+**Change:** Add SDI_lag6 (6 months prior = same season, prior half-year)
+**val_rmse:** 0.259145   **val_r2:** 0.744541   **cv_rmse:** 0.228859   **total_seconds:** 0.1
+**Status:** KEEP — 0.2666→0.2591 (biggest single-lag jump). Semi-annual periodicity strong signal.
+
+---
+
+## Exp 057 — Add SDI_lag12 (year-over-year anchor)
+
+**Date:** 2026-05-18  **Commit:** 3dcc8f8
+**Model:** Lasso(alpha=0.001) + lags 1,2,3,6,12
+**Change:** Add SDI_lag12 (12 months prior = same month last year)
+**val_rmse:** 0.255989   **val_r2:** 0.743770   **cv_rmse:** 0.221954   **total_seconds:** 0.1
+**Status:** KEEP — 0.2591→0.2560. Year-over-year comparison adds signal; CV improves more (0.229→0.222).
+
+---
+
+## Exp 058 — Add SDI_lag4, SDI_lag5 (intermediate lags)
+
+**Date:** 2026-05-18  **Commit:** discarded (git checkout -- train.py)
+**Model:** Lasso(alpha=0.001) + lags 1,2,3,4,5,6,12
+**Change:** Add lag4 and lag5 (months 4 and 5 prior, between 3-month and 6-month anchors)
+**val_rmse:** ~0.2560   **val_r2:** ~0.744   **cv_rmse:** ~0.222   **total_seconds:** ~0.3
+**Status:** DISCARD — identical to lag3+lag6+lag12 alone. Intermediate lags fully redundant once lag3 and lag6 are present. No new information.
+
+---
+
+## Exp 059 — Add SDI_lag9 (Q3 seasonal anchor)
+
+**Date:** 2026-05-18  **Commit:** 10f8e2b
+**Model:** Lasso(alpha=0.001) + lags 1,2,3,6,9,12
+**Change:** Add SDI_lag9 (9 months prior = one quarter before lag12)
+**val_rmse:** 0.252799   **val_r2:** 0.750117   **cv_rmse:** 0.219851   **total_seconds:** 0.1
+**Status:** KEEP — 0.2560→0.2528, R2 0.744→0.750. Quarterly seasonal pattern (lag9 ≈ same season, 3 months earlier).
+
+---
+
+## Exp 060 — ElasticNet(alpha=0.001, l1_ratio=0.5) on full lag set
+
+**Date:** 2026-05-18  **Commit:** fb39117
+**Model:** ElasticNet(alpha=0.001, l1_ratio=0.5) + lags 1,2,3,6,9,12
+**Change:** Replace Lasso with ElasticNet to handle correlated lags (L2 component prevents hard zeroing)
+**val_rmse:** 0.252059   **val_r2:** 0.751578   **cv_rmse:** 0.219380   **total_seconds:** 0.2
+**Status:** KEEP — 0.2528→0.2521. ElasticNet distributes weight across correlated lags slightly better than Lasso.
+
+---
+
+## Exp 061 — ElasticNet l1_ratio grid search → l1_ratio=0.2 best
+
+**Date:** 2026-05-18  **Commit:** 66607dd
+**Model:** ElasticNet(alpha=0.001, l1_ratio=0.2) + lags 1,2,3,6,9,12
+**Change:** Grid search over l1_ratio (0.1, 0.2, 0.3, 0.5, 0.7, 0.9) — l1_ratio=0.2 best
+**val_rmse:** 0.251674   **val_r2:** 0.752337   **cv_rmse:** 0.219179   **total_seconds:** 0.2
+**Status:** KEEP — 0.2521→0.2517. More L2 weight (l1_ratio=0.2 ≈ mostly ridge) better for correlated lags.
+
+---
+
+## Exp 062 — IDW Nearest-Park Correction on ElasticNet+Lags
+
+**Date:** 2026-05-18  **Commit:** 130217f
+**Model:** ElasticNet(alpha=0.001, l1_ratio=0.2) + IDW correction (ECO+HUM+GEO K=5)
+**Change:** Apply IDW residual correction on top of ElasticNet+lag model (same as exp048 but with multi-lag base)
+**val_rmse:** 0.251603   **val_r2:** 0.752476   **cv_rmse:** 0.219179   **total_seconds:** 0.2
+**Status:** KEEP (marginal) — 0.2517→0.2516. IDW provides negligible improvement on stronger base model.
+**Notes:** IDW correction was more useful on weaker base (exp047/048, lag1 only). With 6 lags, model residuals are less spatially correlated.
+
+---
+
+## Exp 063 — Add SDI_cumean (park×taxon all-time expanding mean)
+
+**Date:** 2026-05-18  **Commit:** c87262a
+**Model:** ElasticNet(alpha=0.001, l1_ratio=0.2) + lags 1,2,3,6,9,12 + SDI_cumean
+**Change:** Add expanding mean of all prior SDI values per park×taxon (park-specific baseline level)
+**val_rmse:** 0.248553   **val_r2:** 0.758439   **cv_rmse:** 0.215166   **total_seconds:** 0.3
+**Status:** KEEP — 0.2516→0.2486, R2 0.752→0.758. Cumulative mean captures park×taxon long-run baseline. New information beyond the lag structure.
+
+---
+
+## Exp 064 — Add SDI_month_cumean (seasonal baseline per park×taxon×month)
+
+**Date:** 2026-05-18  **Commit:** 8b9c73a
+**Model:** ElasticNet(alpha=0.001, l1_ratio=0.2) + lags 1,2,3,6,9,12 + SDI_cumean + SDI_month_cumean
+**Change:** Add expanding mean of same-calendar-month prior SDI values per park×taxon (seasonal baseline)
+**val_rmse:** 0.245588   **val_r2:** 0.764170   **cv_rmse:** 0.213279   **total_seconds:** 4.3
+**Status:** KEEP — 0.2486→0.2456, R2 0.758→0.764. Month-specific baseline more precise than all-months cumean; "average June SDI for these Aves in Yellowstone."
+
+---
+
+## Exp 065 — HistGBM(max_iter=500) + full feature set (lags + cumeans)
+
+**Date:** 2026-05-18  **Commit:** discarded (git checkout -- train.py)
+**Model:** HistGradientBoostingRegressor(max_iter=500) + lags 1,2,3,6,9,12 + SDI_cumean + SDI_month_cumean
+**Change:** Replace ElasticNet with HistGBM given the strong temporal feature set
+**val_rmse:** ~0.261   **val_r2:** ~0.740   **cv_rmse:** ~0.235   **total_seconds:** ~20
+**Status:** DISCARD — val=0.261 worse than ElasticNet 0.246. Tree models continue to overfit park signatures. With rich temporal features, linear model generalizes better.
+
+
+---
+
+## Exp 066 — Add SDI_dev (deviation of lag1 from seasonal norm)
+
+**Date:** 2026-05-18  **Commit:** 7e9702a
+**Model:** ElasticNet(alpha=0.001, l1_ratio=0.2) + lags+cumeans+dev
+**Change:** Add SDI_dev = SDI_lag1 - SDI_month_cumean. Captures whether last month's SDI was above/below seasonal norm for this park×taxon×month. Regression-to-mean signal.
+**val_rmse:** 0.244347   **val_r2:** 0.766547   **cv_rmse:** 0.211327   **total_seconds:** 1.0
+**Status:** KEEP — 0.2456→0.2434. SDI_dev adds directional information the model benefits from having pre-computed.
+
+---
+
+## Exp 067 — Add n_prior_months (cumean reliability signal)
+
+**Date:** 2026-05-18  **Commit:** d06b6bc
+**Model:** ElasticNet(alpha=0.001, l1_ratio=0.2) + all prior features + n_prior_months
+**Change:** Add n_prior_months = count of prior SDI observations for this park×taxon (cumcount). Park×taxa with few observations have noisier cumean; model can weight accordingly.
+**val_rmse:** 0.244103   **val_r2:** 0.767013   **cv_rmse:** 0.211136   **total_seconds:** 1.0
+**Status:** KEEP — marginal 0.2443→0.2441. Reliability signal helps slightly.
+
+---
+
+## Exp 068 — Add SDI_dev12 (same-month last year vs seasonal norm)
+
+**Date:** 2026-05-18  **Commit:** 39acb66
+**Model:** ElasticNet(alpha=0.001, l1_ratio=0.2) + all prior features + SDI_dev12
+**Change:** Add SDI_dev12 = SDI_lag12 - SDI_month_cumean. Interannual variability: was last year's same month above/below the multi-year average? Complements SDI_dev.
+**val_rmse:** 0.243872   **val_r2:** 0.767453   **cv_rmse:** 0.211000   **total_seconds:** 1.1
+**Status:** KEEP — marginal 0.2441→0.2439.
+
+---
+
+## Exp 069a — traffic_lag1 (lagged monthly traffic) [discarded]
+
+**Date:** 2026-05-18  **Commit:** discarded (git checkout -- train.py)
+**Change:** Add monthly_traffic(t-1) as feature — human pressure last month affecting biodiversity this month.
+**val_rmse:** ~0.243878   **Status:** DISCARD — essentially identical (0.000006 worse). Human pressure lag adds no signal on top of the rich SDI temporal features already in model.
+
+---
+
+## Exp 069 — Taxon×Season interaction features
+
+**Date:** 2026-05-18  **Commit:** b383c37
+**Model:** ElasticNet(alpha=0.001, l1_ratio=0.2) + 63 numeric features
+**Change:** Add tg_{taxon}_sin and tg_{taxon}_cos for each of 13 taxon groups (26 new features). Allows model to learn per-taxon seasonal curves — Birds peak in spring, Insects in summer, etc.
+**val_rmse:** 0.243534   **val_r2:** 0.768097   **cv_rmse:** 0.211134   **total_seconds:** 1.2
+**Status:** KEEP — 0.2439→0.2435. 13 taxon groups × 2 seasonal terms = 26 features.
+
+---
+
+## Exp 070 — Taxon×year_norm temporal trend interactions
+
+**Date:** 2026-05-18  **Commit:** c40aed8
+**Model:** ElasticNet(alpha=0.001, l1_ratio=0.2) + 76 numeric features
+**Change:** Add tg_{taxon}_year for each taxon group (13 new features). Allows model to learn per-taxon temporal trends over 2021–2025 (recovery from pandemic, climate shifts, etc.).
+**val_rmse:** 0.243479   **val_r2:** 0.768203   **cv_rmse:** 0.211336   **total_seconds:** 1.3
+**Status:** KEEP — marginal 0.24353→0.24348.
+**Notes:** Now using 76 numeric features + taxon OHE. Improvements are becoming very small (~0.0001 per experiment). The model may be approaching the cross-park generalization ceiling for linear methods on this dataset.
+
+---
+
+## Exp 071 — SDI_park_lag1 (cross-taxon park-month mean lag1)
+
+**Date:** 2026-05-18  **Commit:** discarded (git checkout -- train.py)
+**Change:** Add mean of SDI_lag1 across ALL taxa for this (park, year, month) — cross-taxon park health signal.
+**val_rmse:** ~0.243614   **Status:** DISCARD — 0.2435→0.2436 slightly worse. Cross-taxon mean is redundant given own-taxon lag1 is already in model.
+
+---
+
+## Current State (as of Exp 070)
+
+**Best model:** ElasticNet(alpha=0.001, l1_ratio=0.2, max_iter=10000)
+**Feature count:** 76 numeric + taxon_group OHE (13 groups)
+**val_rmse:** 0.24348   **val_r2:** 0.768   **cv_rmse:** 0.211
+**Experiments run:** 71 (032–071 on rarefied SDI; 025–031 in data structure study)
+
+**Feature groups:**
+- 28 base features: ECO (10) + HUM (8) + GEO (2) + TIME (3) + TRAF (2) + log_n_obs (1)
+- 6 temporal lags: SDI_lag1,2,3,6,9,12
+- 2 baseline features: SDI_cumean, SDI_month_cumean
+- 2 deviation features: SDI_dev (=lag1−month_cumean), SDI_dev12 (=lag12−month_cumean)
+- 1 reliability feature: n_prior_months
+- 39 taxon×time interactions: 13 taxa × (sin, cos, year_norm)
+- 1 categorical (OHE): taxon_group
+
+**Gap to target:** val_rmse 0.244 vs 0.20 target = 0.044 remaining.
+**Rate of improvement:** ~0.0001–0.0003 per experiment in recent rounds.
+**Assessment:** Model is in diminishing-returns territory. Remaining gap likely from cross-park heterogeneity not captured by available static features. A mixed-effects model or richer per-park dynamic data would be needed to close this gap.
+

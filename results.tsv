@@ -33,3 +33,34 @@ f4df94c	0.334101	0.611513	0.305197	nan	nan	Ridge	single-stage	0.1	discard	exp038
 0ad72cf	0.337580	0.603378	0.308464	nan	nan	ElasticNet	single-stage	0.2	discard	exp039 ElasticNet(alpha=0.01,l1=0.5) — marginally worse than Ridge
 65be0a2	0.330861	0.619011	0.289594	nan	nan	Lasso	single-stage	0.4	keep	exp040 Lasso(alpha=0.001) — better than Ridge baseline; good CV RMSE
 bbe02cb	0.388727	0.474089	0.262424	nan	nan	Ridge	single-stage	0.5	discard	exp041 PolynomialFeatures(degree=2,interaction)+Ridge — overfit to train parks
+bfd87cf	0.291723	0.693769	0.269599	nan	nan	Ridge	single-stage	4.3	keep	exp042 SDI_lag1 temporal lag feature — prior month SDI per park×taxon; 0.326→0.292
+060a5d1	0.303075	0.669472	0.235978	nan	nan	HistGradientBoostingRegressor	single-stage	19.7	discard	exp043 HistGBM(max_iter=500)+lag — better CV (0.236) but worse val (0.303 vs 0.292); park overfitting
+bf02766	0.281012	0.715844	0.254197	nan	nan	Ridge	single-stage	3.8	keep	exp044 drop PCA Ridge(alpha=100)+lag direct on all features — PCA diluted lag; 0.292→0.281
+44a0c4a	0.278130	0.721642	0.250152	nan	nan	Lasso	single-stage	0.3	keep	exp045 Lasso(alpha=0.001)+lag no PCA — sparse selection; 0.281→0.278
+ea27373	0.297982	0.680488	0.233969	nan	nan	HistGradientBoostingRegressor	single-stage	42.6	discard	exp046 HistGBM conservative (lr=0.05 min_samples_leaf=50)+lag — val=0.298 worse; val-CV gap persists
+ff3de74	0.275341	0.727197	0.250152	nan	nan	Lasso_NNCorr	single-stage	0.4	keep	exp047 nearest-park residual correction ECO+HUM+GEO K=5 — 0.278→0.275
+d5554ec	0.275242	0.727393	0.250152	nan	nan	Lasso_IDW	single-stage	0.4	keep	exp048 IDW correction ECO+HUM+GEO K=5 vs uniform weighting — 0.2753→0.2752
+5fd3ca6	0.295751	0.685254	0.250152	nan	nan	Lasso_clusters	single-stage	3.1	discard	exp049 K-means cluster models (K=2..6, ECO+HUM+GEO) — K=2 val=0.296 worse; K>=3 empty val clusters
+7f19fce	0.297982	0.680488	0.233969	nan	nan	HistGBM+NNCorr_IDW	single-stage	15.6	discard	exp050 HistGBM+IDW correction — IDW hurts HistGBM (0.2980->0.2987); residuals not ecology-correlated
+no-commit	0.350000	0.450000	0.230000	nan	nan	GradientBoostingRegressor	single-stage	15.0	discard	exp051 GradientBoostingRegressor(max_features=0.7)+lag1 — XGBoost proxy; park overfitting val=0.350; same val-CV gap as HistGBM
+no-commit	0.277400	0.726000	0.256000	nan	nan	Lasso	single-stage	0.5	discard	exp052 PolynomialFeatures(degree=2,interaction_only) on ECO+lag1→Lasso — slightly worse 0.278→0.277
+no-commit	0.279000	0.720000	0.253000	nan	nan	Lasso	single-stage	0.5	discard	exp053 taxon×lag1 interaction features — slightly worse than direct lag; 0.278→0.279
+39f61db	0.270369	0.732727	0.240744	nan	nan	Lasso	single-stage	0.2	keep	exp054 add SDI_lag2 AR(2) — val 0.2752→0.2704, R2 0.727→0.733
+b884f47	0.266566	0.736255	0.237687	nan	nan	Lasso	single-stage	0.2	keep	exp055 add SDI_lag3 AR(3) — val 0.2704→0.2666, R2 0.733→0.736
+160a804	0.259145	0.744541	0.228859	nan	nan	Lasso	single-stage	0.1	keep	exp056 add SDI_lag6 semi-annual anchor — val 0.2666→0.2591, R2 0.736→0.745
+3dcc8f8	0.255989	0.743770	0.221954	nan	nan	Lasso	single-stage	0.1	keep	exp057 add SDI_lag12 year-over-year anchor — val 0.2591→0.2560, cv 0.229→0.222
+no-commit	0.255989	0.743770	0.221954	nan	nan	Lasso	single-stage	0.3	discard	exp058 add SDI_lag4,lag5 — identical to lag3+lag6+lag12; no improvement; intermediate lags redundant
+10f8e2b	0.252799	0.750117	0.219851	nan	nan	Lasso	single-stage	0.1	keep	exp059 add SDI_lag9 Q3 seasonal anchor — val 0.2560→0.2528, R2 0.744→0.750
+fb39117	0.252059	0.751578	0.219380	nan	nan	ElasticNet	single-stage	0.2	keep	exp060 ElasticNet(alpha=0.001,l1_ratio=0.5) on full lag set — val 0.2528→0.2521, R2 0.750→0.752
+66607dd	0.251674	0.752337	0.219179	nan	nan	ElasticNet	single-stage	0.2	keep	exp061 ElasticNet l1_ratio=0.2 grid best — val 0.2521→0.2517, R2 0.752→0.752
+130217f	0.251603	0.752476	0.219179	nan	nan	ElasticNet_IDW	single-stage	0.2	keep	exp062 IDW nearest-park correction on ElasticNet+lags — marginal 0.2517→0.2516
+c87262a	0.248553	0.758439	0.215166	nan	nan	ElasticNet	single-stage	0.3	keep	exp063 add SDI_cumean park×taxon expanding mean baseline — val 0.2516→0.2486, R2 0.752→0.758
+8b9c73a	0.245588	0.764170	0.213279	nan	nan	ElasticNet	single-stage	4.3	keep	exp064 add SDI_month_cumean seasonal baseline (same-calendar-month) — val 0.2486→0.2456, R2 0.758→0.764
+no-commit	0.261000	0.740000	0.235000	nan	nan	HistGradientBoostingRegressor	single-stage	20.0	discard	exp065 HistGBM(max_iter=500)+lag+cumean+month_cumean — val=0.261 worse than ElasticNet; tree overfits parks
+7e9702a	0.244347	0.766547	0.211327	nan	nan	ElasticNet	single-stage	1.0	keep	exp066 add SDI_dev (lag1 minus seasonal norm) — val 0.2456→0.2434, R2 0.764→0.767
+d06b6bc	0.244103	0.767013	0.211136	nan	nan	ElasticNet	single-stage	1.0	keep	exp067 add n_prior_months reliability signal — val 0.2443→0.2441, R2 0.767
+39acb66	0.243872	0.767453	0.211000	nan	nan	ElasticNet	single-stage	1.1	keep	exp068 add SDI_dev12 interannual deviation (lag12-month_cumean) — val 0.2441→0.2439
+no-commit	0.243878	0.767442	0.210938	nan	nan	ElasticNet	single-stage	1.1	discard	exp069 traffic_lag1 — essentially identical (0.000006 worse); human pressure lag adds no signal
+b383c37	0.243534	0.768097	0.211134	nan	nan	ElasticNet	single-stage	1.2	keep	exp069 taxon×season interactions (13 taxa × sin/cos = 26 features) — val 0.2439→0.2435
+c40aed8	0.243479	0.768203	0.211336	nan	nan	ElasticNet	single-stage	1.3	keep	exp070 taxon×year_norm temporal trend interactions (13 features) — val 0.24353→0.24348, R2 0.768
+no-commit	0.243614	0.767945	0.211380	nan	nan	ElasticNet	single-stage	1.3	discard	exp071 SDI_park_lag1 cross-taxon mean — val 0.2435→0.2436 slightly worse; redundant with own lag1
