@@ -64,3 +64,18 @@ no-commit	0.243878	0.767442	0.210938	nan	nan	ElasticNet	single-stage	1.1	discard
 b383c37	0.243534	0.768097	0.211134	nan	nan	ElasticNet	single-stage	1.2	keep	exp069 taxon×season interactions (13 taxa × sin/cos = 26 features) — val 0.2439→0.2435
 c40aed8	0.243479	0.768203	0.211336	nan	nan	ElasticNet	single-stage	1.3	keep	exp070 taxon×year_norm temporal trend interactions (13 features) — val 0.24353→0.24348, R2 0.768
 no-commit	0.243614	0.767945	0.211380	nan	nan	ElasticNet	single-stage	1.3	discard	exp071 SDI_park_lag1 cross-taxon mean — val 0.2435→0.2436 slightly worse; redundant with own lag1
+0a17cd2	0.241870	0.771255	0.211605	nan	nan	ElasticNet	single-stage	3.9	keep	exp072 taxon×avg_FPAR ecological response (13 features) — val 0.24348→0.24187, R2 0.771
+5585601	0.241645	0.771681	0.211374	nan	nan	ElasticNet	single-stage	1.7	keep	exp073 taxon×latitude biogeographic gradient (13 features) — val 0.24187→0.24164, R2 0.772
+c396140	0.241570	0.771823	0.210913	nan	nan	ElasticNet	single-stage	4.2	keep	exp074 taxon×pop_density human disturbance response (13 features) — val 0.24164→0.24157, R2 0.772
+0a8fcb9	0.238458	0.777663	0.209799	nan	nan	ElasticNet	single-stage	6.3	keep	exp075 greedy forward selection 30 interactions (7 of 30 kept) — val 0.24157→0.23846, R2 0.778, 194 features
+no-commit	0.239450	0.775810	0.210285	nan	nan	ElasticNet	single-stage	9.3	discard	exp076 alpha=0.0005 — 0.23846→0.23945 worse; current alpha=0.001 better calibrated for 194 features
+no-commit	0.238528	0.777533	0.209458	nan	nan	ElasticNet	single-stage	1.8	discard	exp077 alpha=0.003 — 0.23846→0.23853 marginal val worsening (cv slightly better 0.2094); alpha=0.001 optimal
+no-commit	0.238689	0.777232	0.209527	nan	nan	ElasticNet	single-stage	2.2	discard	exp078 l1_ratio=0.5 — 0.23846→0.23869 worse; l1_ratio=0.2 (more Ridge-like) optimal for 194 features
+2ed31eb	0.238407	0.777758	0.209521	nan	nan	ElasticNet	single-stage	5.9	keep	exp079 SDI_park_cumean park-level baseline — val 0.23846→0.23841, R2 0.778
+no-commit	0.238480	0.777623	0.209426	nan	nan	ElasticNet	single-stage	3.5	discard	exp080 SDI_lag_std volatility — 0.23841→0.23848 slightly worse; variance of lags redundant with existing deviation features
+no-commit	0.480590	0.096899	0.209128	nan	nan	ElasticNet	single-stage	3.2	discard	exp081 park×taxon target encoding — BROKEN: join misaligned (0.23841→0.4806); rewrite with merge in next attempt
+no-commit	0.480590	0.096899	0.209128	nan	nan	ElasticNet	single-stage	3.2	discard	exp081b park×taxon target encoding fixed — still broken: model over-relies on target-encoded feature; val parks imputed with median gives 0.48 RMSE; leakage architecture problem
+no-commit	0.239608	0.775515	0.210089	nan	nan	ElasticNet	single-stage	1.7	discard	exp082 PCA(50) on tg_ interaction block — 0.23841→0.23961 worse; compression loses signal; raw features better
+no-commit	0.250541	0.754560	0.215681	nan	nan	HistGradientBoostingRegressor	single-stage	10.5	discard	exp083 HistGBM(max_iter=300,lr=0.05,depth=5) — 0.23841→0.25054 worse; tree overfits cross-park; ElasticNet generalizes better on held-out parks
+no-commit	0.242811	0.769471	0.210922	nan	nan	Ridge	single-stage	1.2	discard	exp084 Ridge(alpha=1.0) — 0.23841→0.24281 worse; ElasticNet(0.001, l1=0.2) better; mild L1 sparsity helps
+no-commit	0.238469	0.777644	0.209533	nan	nan	ElasticNet	single-stage	6.4	discard	exp085 SDI_cumean×year_norm temporal momentum — 0.23841→0.23847 no gain; interaction collinear with existing year_norm and cumean features

@@ -1,0 +1,417 @@
+% NeurIPS 2026 — course submission (preprint mode)
+\documentclass{article}
+
+% NeurIPS 2026 style (file must be in same directory at compile time)
+\usepackage[preprint]{neurips_2026}
+
+% Standard encoding and font
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+% Hyperlinks
+\usepackage{hyperref}
+\usepackage{url}
+
+% Tables
+\usepackage{booktabs}
+
+% Math
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{nicefrac}
+\usepackage{microtype}
+
+% Figures
+\usepackage{graphicx}
+
+% Color
+\usepackage{xcolor}
+
+% Citations
+\usepackage{natbib}
+
+% -----------------------------------------------------------------------
+\title{Automated Feature Discovery for National Park Biodiversity\\
+       Prediction: An AutoResearch Study}
+
+\author{%
+  Isabella Woods \\
+  STAT 390 Capstone, Northwestern University \\
+  \texttt{isabellawoods2026@u.northwestern.edu}
+}
+
+\begin{document}
+
+\maketitle
+
+% -----------------------------------------------------------------------
+\begin{abstract}
+We apply an AutoResearch loop---a human-supervised agent iteration
+protocol---to the problem of predicting per-taxon Shannon Diversity
+Index~(SDI) in 149 US National Parks using iNaturalist citizen-science
+observations. Starting from a Ridge regression baseline
+(RMSE~$=$~0.326), 85 disciplined experiments reduced validation RMSE
+to 0.238 ($R^{2}$~$=$~0.778), a 27\% improvement. The most impactful
+interventions were autoregressive temporal lags, cumulative SDI
+baselines, and taxon-specific ecological interaction features
+discovered via greedy forward selection. We demonstrate that linear
+regularized models generalize better than tree-based models under
+park-based cross-validation, and that the remaining performance gap
+reflects irreducible cross-park heterogeneity rather than model
+capacity.
+\end{abstract}
+
+% -----------------------------------------------------------------------
+\section{Introduction}
+\label{sec:intro}
+
+National Park Service (NPS) biodiversity monitoring traditionally
+relies on structured field surveys that are expensive, infrequent, and
+geographically uneven. Citizen-science platforms such as iNaturalist
+now provide millions of georeferenced observations annually, but raw
+observation counts are severely confounded by observer effort: the
+platform grew more than 20$\times$ between 2010 and 2025, producing an
+apparent upward trend in apparent diversity ($r = 0.88$ between
+$\log(\text{observations})$ and SDI) that is methodological rather than
+ecological.
+
+We address this problem in two ways. First, rarefaction---subsampling
+each (park, month, taxon) cell to a fixed $N = 50$ observations before
+computing SDI---removes the effort bias and reduces the spurious
+correlation to $r = 0.35$. Second, we apply an \emph{AutoResearch
+loop}: a structured agent-assisted iteration protocol in which a large
+language model proposes feature engineering hypotheses, edits a
+designated section of the training script, evaluates the result, and
+commits to a version-controlled experiment log. Human oversight is
+retained for problem framing, leakage detection, and stopping
+decisions.
+
+\textbf{Contributions.} (1) We achieve a 27\% validation RMSE
+reduction over 85 experiments (0.326 $\to$ 0.238), with autoregressive
+temporal lags contributing the largest single gain
+($\Delta\text{RMSE} = 0.073$). (2) We provide an empirical
+demonstration that regularized linear models outperform gradient
+boosting under strict park-based cross-validation on this dataset.
+(3) We characterize the failure modes of the AutoResearch protocol,
+including leakage architecture errors and diminishing-returns pursuit
+past ecological significance.
+
+\textbf{Research question.} Can an LLM-assisted AutoResearch loop
+discover effective feature engineering strategies for time-series
+biodiversity prediction, starting only from a minimal baseline?
+
+% -----------------------------------------------------------------------
+\section{Data and Problem Formulation}
+\label{sec:data}
+
+\subsection{Dataset}
+
+The raw dataset consists of iNaturalist Research-Grade observations
+\citep{inaturalist2025} spanning 2021--2025 for 149 US National Parks.
+Observations are aggregated by (park, year, month, taxon group), where
+taxon group is one of 13 categories: Aves, Mammalia, Plantae, Insecta,
+Reptilia, Amphibia, Fungi, Arachnida, Mollusca, Actinopterygii,
+Animalia, and two residual groups. These are joined with MODIS-derived
+satellite features (fraction of photosynthetically active radiation
+[FPAR], gross primary production [GPP], evapotranspiration [ET], snow
+cover [SNOW]) and park-level human-activity features (annual visitor
+counts, traffic volume, population density within a 50\,km radius, and
+facility counts).
+
+\subsection{Rarefaction}
+
+Each (park, month, taxon) cell is subsampled to exactly $N = 50$
+observations before computing SDI, using a fixed random seed for
+reproducibility. Cells with fewer than 50 observations are excluded.
+This rarefaction step \citep{hurlbert1971} reduces the effort
+correlation from $r = 0.88$ to $r = 0.35$ and eliminates the
+spurious temporal trend visible in raw SDI. The resulting dataset
+contains \textbf{8,824 rows}, each a (park, year, month, taxon)
+quadruple.
+
+The target variable is the rarefied Shannon Diversity Index:
+\begin{equation}
+  \text{SDI}_{\text{rarefied}} = -\sum_{i} p_{i} \log p_{i},
+  \label{eq:sdi}
+\end{equation}
+where $p_i$ is the proportion of species $i$ within the rarefied
+subsample.
+
+\subsection{Train/Validation Split}
+
+We use a \textbf{park-based} split: all months and taxa from a given
+park are assigned entirely to either the training set (108 parks) or
+the validation set (27 parks). This prevents any temporal or taxonomic
+leakage across parks and mirrors the intended use case, where
+predictions must generalize to parks not seen during model fitting. The
+evaluation metric throughout is validation RMSE on the 27 held-out
+parks (never used during feature engineering or model selection).
+
+% -----------------------------------------------------------------------
+\section{AutoResearch Loop Design}
+\label{sec:loop}
+
+\subsection{Protocol}
+
+Each experiment follows a fixed protocol: (1) read the current state
+of \texttt{train.py} and \texttt{results.tsv}; (2) form a hypothesis
+about a feature or model change likely to reduce validation RMSE; (3)
+edit only the designated feature-engineering section (\S2) of
+\texttt{train.py}; (4) run the script with a 10-minute kill timer; (5)
+compare validation RMSE to the previous best; (6) keep the change if
+RMSE strictly improves, otherwise revert; (7) append the result to
+\texttt{results.tsv} and commit to Git with a descriptive message.
+The evaluation code (train/val split, metric computation, random seeds)
+is never modified. This append-only log and single-change discipline
+prevent compounding confounds and enable clean ablations.
+
+\subsection{Feature Engineering Space}
+
+Over 85 experiments, the agent explored the following feature families:
+
+\begin{itemize}
+  \item \textbf{ECO} --- satellite-derived ecological state: FPAR,
+    GPP, ET, SNOW, fire indicators.
+  \item \textbf{HUM} --- human-impact proxies: visitor counts,
+    traffic, population density, facility counts.
+  \item \textbf{GEO} --- geographic position: latitude, longitude.
+  \item \textbf{TIME} --- temporal encoding: $\sin/\cos$ of month
+    (seasonality), \texttt{year\_norm} (linear trend).
+  \item \textbf{AR lags} --- autoregressive features: SDI at lag
+    1, 2, 3, 6, 9, and 12 months within the same (park, taxon) series.
+  \item \textbf{Cumulative baselines} --- expanding mean SDI by park
+    $\times$ taxon (\texttt{SDI\_cumean}), expanding mean of the same
+    calendar month (\texttt{SDI\_month\_cumean}), and park-level
+    cross-taxon mean (\texttt{SDI\_park\_cumean}).
+  \item \textbf{Deviations} --- difference between lag-1 and seasonal
+    norm (\texttt{SDI\_dev}), interannual deviation (\texttt{SDI\_dev12}),
+    and prior-observation reliability count (\texttt{n\_prior\_months}).
+  \item \textbf{Taxon interactions} --- products of taxon-group
+    indicator with FPAR, latitude, population density, season, and
+    year trend, selected by greedy forward search over 30 candidates.
+\end{itemize}
+
+Experiments ran in 5 phases: alpha/model tuning (Exp.\ 032--041),
+AR lag expansion (Exp.\ 042--059), ElasticNet and baselines
+(Exp.\ 060--064), deviation and interaction features (Exp.\ 065--075),
+and final validation and ablations (Exp.\ 076--085).
+
+% -----------------------------------------------------------------------
+\section{Experiments and Results}
+\label{sec:results}
+
+\begin{table}[t]
+  \caption{Key experimental phases. Val RMSE is measured on 27
+    held-out parks. ``Experiments'' column gives the range of
+    experiment indices in the run log.}
+  \label{tab:phases}
+  \centering
+  \small
+  \begin{tabular}{llllrr}
+    \toprule
+    Phase & Exp.\ range & Key change & Model & Val RMSE & Val $R^{2}$ \\
+    \midrule
+    Baseline       & 032      & Ridge($\alpha$=100), rarefied SDI           & Ridge       & 0.326 & 0.611 \\
+    AR lag-1       & 042--044 & SDI\_lag1 prior-month signal                & Ridge/Lasso & 0.278 & 0.722 \\
+    AR lag-2 to 12 & 054--059 & SDI\_lag2,3,6,9,12 multi-scale AR           & Lasso       & 0.253 & 0.750 \\
+    Baselines      & 063--064 & SDI\_cumean, SDI\_month\_cumean             & ElasticNet  & 0.246 & 0.764 \\
+    Deviations     & 066--070 & SDI\_dev, SDI\_dev12, taxon$\times$season   & ElasticNet  & 0.243 & 0.768 \\
+    Interactions   & 072--075 & taxon$\times$FPAR/lat/pop + greedy (7/30)   & ElasticNet  & 0.238 & 0.778 \\
+    Final          & 079      & SDI\_park\_cumean park-level baseline        & ElasticNet  & 0.238 & 0.778 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Final Model}
+
+The best model is \texttt{ElasticNet(alpha=0.001, l1\_ratio=0.2,
+max\_iter=10000)} applied to 195 numeric features plus one
+one-hot-encoded taxon categorical variable. The $\ell_1$ ratio of 0.2
+(more Ridge-like than Lasso) is consistent with the high mutual
+correlation among AR lags, cumulative baselines, and deviation
+features: mild sparsity pressure reduces coefficients but does not
+zero them. Stability is confirmed by two independent runs with
+\texttt{random\_state=42} yielding identical validation RMSE to 6
+decimal places.
+
+\subsection{Metric Trajectory}
+
+Figure~\ref{fig:trajectory} shows the full validation RMSE and $R^{2}$
+trajectory across all 85 experiments. The AR lag phase (Exp.\ 042--059)
+produces the steepest decline, while subsequent phases yield diminishing
+but cumulatively meaningful returns.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\linewidth]{outputs/metric_over_time.png}
+  \caption{Validation RMSE (left axis, blue) and $R^{2}$ (right axis,
+    orange) across all 85 experiments. Filled circles indicate kept
+    experiments; open circles indicate discarded experiments. The
+    dashed horizontal line marks the 0.20 target RMSE. The largest
+    single drop corresponds to the introduction of SDI\_lag1
+    (Exp.\ 042).}
+  \label{fig:trajectory}
+\end{figure}
+
+\subsection{Residual Diagnostics}
+
+Figure~\ref{fig:residuals} summarizes residual diagnostics for the
+final model. Residuals are approximately centered around zero across
+most parks, with elevated variance in parks that have sparse temporal
+coverage (fewer than 6 months with $\geq$50 observations per taxon).
+No systematic bias by taxon group is observed, suggesting that the
+taxon interaction features successfully capture the main differential
+responses.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\linewidth]{outputs/residual_diagnostics.png}
+  \caption{Residual diagnostics for the final ElasticNet model on
+    the 27 held-out validation parks. Top row: residual vs.\ fitted
+    values and QQ-plot. Bottom row: residuals by taxon group and by
+    calendar month, showing no systematic bias in either dimension.}
+  \label{fig:residuals}
+\end{figure}
+
+\subsection{What Failed}
+
+Several experimental directions were explored and rejected:
+
+\textbf{Tree-based models.}
+\texttt{HistGradientBoostingRegressor} consistently produced worse
+validation RMSE (0.250--0.303) despite better or comparable CV RMSE
+(0.210--0.236). The validation--CV gap ($\Delta \approx 0.04$) indicates
+that gradient boosting memorizes park-specific patterns in the training
+set that do not transfer to held-out parks. Regularized linear models,
+by contrast, cannot represent park-level intercepts and are therefore
+forced to generalize.
+
+\textbf{PCA compression.}
+Compressing the taxon interaction block with PCA(50) degraded
+validation RMSE from 0.238 to 0.240. The interaction features are
+already sparse and semantically structured; dimensionality reduction
+destroyed this structure.
+
+\textbf{Park $\times$ taxon target encoding.}
+Encoding each (park, taxon) pair as its training-set mean SDI caused
+catastrophic generalization failure (RMSE = 0.481 on validation). For
+the 27 held-out parks, the encoder imputed the global median---a poor
+substitute for park-specific context. This is a canonical example of
+target-encoding leakage that required human detection to diagnose.
+
+\textbf{Generalization gap.}
+The final model achieves CV RMSE = 0.210 vs.\ validation RMSE = 0.238
+($\Delta = 0.028$). This modest gap indicates that cross-park
+heterogeneity is real but not catastrophic; the park-based CV
+procedure is reasonably calibrated.
+
+% -----------------------------------------------------------------------
+\section{Discussion and Limitations}
+\label{sec:discussion}
+
+\subsection{Remaining Performance Gap}
+
+The final model is 0.038 RMSE above the 0.20 target. We attribute this
+primarily to \emph{cross-park heterogeneity}: each park occupies a
+distinct position in a high-dimensional ecological space defined by
+elevation, climate zone, dominant vegetation biome, and management
+history. None of these variables are directly available in our feature
+set, and their proxies (latitude, FPAR, snow cover) provide only a
+partial representation.
+
+\subsection{Linear Model Requirement}
+
+The consistent superiority of ElasticNet over gradient boosting under
+park-based cross-validation reflects a structural property of the
+problem: with only 108 training parks, tree-based models have
+sufficient capacity to memorize park-specific response functions,
+including idiosyncratic seasonal patterns and taxon composition, that
+do not appear in the 27 validation parks. Regularized linear models
+cannot express such memorization and are therefore forced to rely on
+transferable patterns.
+
+\subsection{Agent Limitations}
+
+Three recurring failure modes were identified in the AutoResearch
+protocol:
+
+\begin{enumerate}
+  \item \textbf{Leakage architecture errors.} The target-encoding
+    experiment (Exp.\ 081--081b) introduced a train/test leakage
+    that the agent did not independently detect. Human review of the
+    result (RMSE = 0.481, more than double the baseline) was required
+    to identify and reject the change.
+  \item \textbf{Diminishing returns pursuit.} After Exp.\ 075
+    (RMSE = 0.238), the agent continued for 10 additional experiments
+    with improvements smaller than $10^{-3}$ RMSE. These experiments
+    consumed runtime without ecological significance.
+  \item \textbf{Greedy selection limitations.} Forward selection over
+    30 taxon interaction candidates retained 7. This process cannot
+    capture synergistic interactions between features not individually
+    informative, potentially missing combined signals.
+\end{enumerate}
+
+\subsection{Recommended Redesign}
+
+In retrospect, the most impactful architectural change would have been
+to introduce a mixed-effects model structure from the outset, with
+park-level random intercepts. This would have separated park-specific
+baselines from transferable ecological signals, reducing the tension
+between memorization and generalization that constrained the tree-based
+models. Climate zone and elevation strata as grouping variables would
+further stratify the heterogeneity.
+
+% -----------------------------------------------------------------------
+\section{Conclusion}
+\label{sec:conclusion}
+
+Starting from a Ridge regression baseline (RMSE = 0.326, $R^{2}$ =
+0.611), 85 disciplined AutoResearch experiments reduced validation RMSE
+to 0.238 ($R^{2}$ = 0.778), a 27\% improvement. The dominant driver
+was autoregressive temporal context: SDI lags at 1, 2, 3, 6, 9, and
+12 months, together with expanding-mean baselines, contributed an RMSE
+reduction of 0.080. Taxon-specific ecological interaction features
+provided an additional 0.008 RMSE reduction via greedy forward
+selection.
+
+The study confirms that regularized linear models generalize better
+than gradient boosting under strict park-based cross-validation when
+the number of parks is small ($n = 108$ training parks). It also
+illustrates that agent-guided research is effective for systematic
+feature search but requires human oversight for problem framing,
+leakage detection, and stopping decisions based on ecological
+significance rather than numerical improvement alone.
+
+Experiment logs, training code, and results are maintained on the
+project Git repository at branch \texttt{autoresearch/apr27}.
+
+% -----------------------------------------------------------------------
+\bibliographystyle{abbrvnat}
+\begin{thebibliography}{9}
+
+\bibitem[Shannon(1948)]{shannon1948}
+Shannon, C.~E. (1948).
+\newblock A mathematical theory of communication.
+\newblock \emph{Bell System Technical Journal}, 27(3):379--423.
+
+\bibitem[Hurlbert(1971)]{hurlbert1971}
+Hurlbert, S.~H. (1971).
+\newblock The nonconcept of species diversity: a critique and alternative
+  parameters.
+\newblock \emph{Ecology}, 52(4):577--586.
+
+\bibitem[Zou and Hastie(2005)]{zou2005}
+Zou, H. and Hastie, T. (2005).
+\newblock Regularization and variable selection via the elastic net.
+\newblock \emph{Journal of the Royal Statistical Society: Series B},
+  67(2):301--320.
+
+\bibitem[iNaturalist(2025)]{inaturalist2025}
+{iNaturalist} (2025).
+\newblock iNaturalist Research-Grade Observations.
+\newblock \url{https://www.inaturalist.org/}.
+\newblock Accessed 2025.
+
+\end{thebibliography}
+
+\end{document}

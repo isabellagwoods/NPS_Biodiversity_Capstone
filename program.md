@@ -3,16 +3,16 @@
 
 ---
 
-## Current Model (as of Exp 070)
+## Current Model (as of Exp 079)
 
 **Architecture:** Single-stage ElasticNet regression  
 **Target:** `SDI_rarefied` — Shannon Diversity Index computed on 50-observation rarefied subsample per (park × month × taxon_group)  
 **Data:** 2021–2025 iNaturalist observations, ~8,824 rows, 149 parks, 13 taxon groups  
 **Split:** Park-based — all months × taxa from one park stay in the same split (108 train parks / 27 val parks)
 
-**Current best:** `val_rmse = 0.2435`, `val_r2 = 0.768`, `cv_rmse = 0.211`  
+**Current best:** `val_rmse = 0.2384`, `val_r2 = 0.778`, `cv_rmse = 0.210`  
 **Target:** `val_rmse ≤ 0.20`  
-**Experiments run:** 71 (032–071 on rarefied SDI model; 001–031 on prior two-stage model)
+**Experiments run:** 85 (032–085 on rarefied SDI model; 001–031 on prior two-stage model)
 
 ---
 
@@ -44,6 +44,16 @@ Wrapped in a `ColumnTransformer` pipeline:
 | Reliability | n_prior_months (count of prior observations for this park×taxon) | 1 |
 | Taxon×season | tg_{taxon}_sin, tg_{taxon}_cos for 13 taxon groups | 26 |
 | Taxon×trend | tg_{taxon}_year for 13 taxon groups | 13 |
+| Taxon×FPAR | tg_{taxon}_fpar for 13 taxon groups | 13 |
+| Taxon×latitude | tg_{taxon}_lat for 13 taxon groups | 13 |
+| Taxon×pop_density | tg_{taxon}_popd for 13 taxon groups | 13 |
+| Taxon×ET_range | tg_{taxon}_etrange | 13 |
+| Taxon×GPP_range | tg_{taxon}_gpprange | 13 |
+| Taxon×max_SNOW | tg_{taxon}_maxsnow | 13 |
+| Taxon×max_rec_visitors | tg_{taxon}_maxrec | 13 |
+| Taxon×longitude | tg_{taxon}_lon | 13 |
+| Taxon×log_n_obs | tg_{taxon}_lognobs | 13 |
+| AR×seasonal | lag6_sin (SDI_lag6 × month_sin) | 1 |
 | **Categorical** | taxon_group (OHE, 13 groups) | — |
 
 ---
@@ -159,7 +169,10 @@ echo -e "<commit>\t<val_rmse>\t<val_r2>\t<cv_rmse>\tnan\tnan\t<model>\tsingle-st
 | Regularization tuning | 060–062 | ElasticNet(l1_ratio=0.2) marginal gain | 0.252 |
 | Baseline features | 063–064 | SDI_cumean + SDI_month_cumean | 0.246 |
 | Interaction features | 066–070 | SDI_dev, n_prior_months, taxon×season/trend | 0.243 |
+| Taxon×ECO/GEO interactions | 072–074 | taxon×FPAR, ×latitude, ×pop_density | 0.242 |
+| Greedy interaction search | 075 | forward selection 30 candidates, 7 kept | 0.238 |
+| Park baseline + systematic study | 076–085 | SDI_park_cumean kept; alpha/model/dim-reduction confirmed | 0.238 |
 
-**Total improvement:** 0.326 → 0.243 (−25%)  
-**Remaining gap:** 0.243 − 0.200 = 0.043  
-**Assessment:** Model in diminishing-returns territory; ~0.0002 improvement per experiment. Reaching 0.20 may require a structural change (mixed-effects model, richer temporal data, or taxon-specific submodels).
+**Total improvement:** 0.326 → 0.238 (−27%)  
+**Remaining gap:** 0.238 − 0.200 = 0.038  
+**Assessment:** Model in deep diminishing-returns territory. 10-experiment systematic study (exp076–085) confirmed: alpha=0.001 + l1_ratio=0.2 are locked in; ElasticNet outperforms both Ridge and HistGBM on the park-held-out split; PCA compression of interactions hurts. Only SDI_park_cumean improved (marginally). Remaining gap is from cross-park heterogeneity — reaching 0.20 requires structural change (mixed-effects / per-park random effects, or richer temporal data).

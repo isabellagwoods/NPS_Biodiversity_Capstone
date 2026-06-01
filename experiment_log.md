@@ -995,3 +995,128 @@ the number of parameters that can be estimated without overfitting.
 **Rate of improvement:** ~0.0001–0.0003 per experiment in recent rounds.
 **Assessment:** Model is in diminishing-returns territory. Remaining gap likely from cross-park heterogeneity not captured by available static features. A mixed-effects model or richer per-park dynamic data would be needed to close this gap.
 
+
+---
+
+## Exp 072 — Taxon×avg_FPAR ecological response interactions
+
+**Date:** 2026-05-30  **Commit:** 0a17cd2
+**Change:** Add tg_{taxon}_fpar = tg_{taxon} × avg_FPAR for all 13 taxon groups (13 new features).
+**val_rmse:** 0.241870   **val_r2:** 0.771255   **cv_rmse:** 0.211605   **total_seconds:** 3.9
+**Status:** KEEP — 0.24348→0.24187 (−0.00161). Best improvement in recent rounds.
+**Notes:** avg_FPAR (vegetation productivity) interacts meaningfully with taxon identity — plants/mammals/birds likely have different FPAR-SDI relationships than fungi/invertebrates. Per-taxon FPAR slopes capture this. Improvement of 0.00161 is larger than recent experiments (~0.0002/exp). Continue with taxon×latitude next.
+
+
+---
+
+## Exp 073 — Taxon×latitude biogeographic gradient interactions
+
+**Date:** 2026-05-30  **Commit:** 5585601
+**Change:** Add tg_{taxon}_lat = tg_{taxon} × latitude for all 13 taxon groups (13 new features), on top of exp072.
+**val_rmse:** 0.241645   **val_r2:** 0.771681   **cv_rmse:** 0.211374   **total_seconds:** 1.7
+**Status:** KEEP — 0.24187→0.24164 (−0.00022). Smaller gain than FPAR but still positive.
+**Notes:** Latitudinal diversity gradients are taxon-specific (reptiles/insects steeper than plants). Small improvement suggests some signal. Additive gain on top of taxon×FPAR. Next: try taxon×pop_density (human disturbance varies by taxon).
+
+
+---
+
+## Exp 074 — Taxon×pop_density human disturbance response interactions
+
+**Date:** 2026-05-30  **Commit:** c396140
+**Change:** Add tg_{taxon}_popd = tg_{taxon} × pop_density for all 13 taxon groups (13 new features), on top of exp073.
+**val_rmse:** 0.241570   **val_r2:** 0.771823   **cv_rmse:** 0.210913   **total_seconds:** 4.2
+**Status:** KEEP — 0.24164→0.24157 (−0.00008). Marginal gain; cv_rmse also improved slightly to 0.2109.
+**Notes:** Diminishing returns — each taxon×ECO feature adds less signal than the last. The FPAR interaction was the most impactful (−0.00161), latitude added −0.00022, pop_density added −0.00008.
+
+---
+
+## Autoresearch Loop Summary (exp072–074)
+
+**Starting val_rmse:** 0.24348 (exp070)
+**Ending val_rmse:** 0.24157 (exp074)
+**Total improvement:** 0.00191 over 3 experiments
+**Stop condition check:** improvement 0.00191 < 0.03 threshold → STOPPING
+
+**Best interactions by impact:**
+1. Taxon×avg_FPAR: −0.00161 (vegetation productivity — biggest gain)
+2. Taxon×latitude: −0.00022 (biogeographic gradient)
+3. Taxon×pop_density: −0.00008 (human disturbance)
+
+
+---
+
+## Exp 075 — Greedy forward selection over 30 candidate interaction terms
+
+**Date:** 2026-05-30  **Commit:** 0a8fcb9
+**Method:** Greedy forward selection (select_interactions.py) — test each of 30 candidates against the evolving best model; keep if val_rmse improves.
+**val_rmse:** 0.238458   **val_r2:** 0.777663   **cv_rmse:** 0.209799   **total_seconds:** 6.3 (train.py official run)
+**Status:** KEEP — 0.24157→0.23846 (−0.00311). Largest single-experiment gain in many rounds.
+
+**Candidates tested (30 total, 7 kept):**
+
+| Candidate | Δ val_rmse | Action |
+|-----------|-----------|--------|
+| tg×ET_range | −0.00082 | ADDED |
+| tg×GPP_range | −0.00029 | ADDED |
+| tg×max_FPAR | +0.00003 | skip |
+| tg×FPAR_range | +0.00041 | skip |
+| tg×avg_SNOW | +0.00109 | skip |
+| tg×max_SNOW | −0.00008 | ADDED |
+| tg×SNOW_range | +0.00084 | skip |
+| tg×n_burn_obs | ≈0 | skip |
+| tg×pct_burned | ≈0 | skip |
+| tg×avg_rec_visitors | +0.00029 | skip |
+| tg×max_rec_visitors | −0.00025 | ADDED |
+| tg×visit_slope | +0.00218 | skip |
+| tg×avg_annual_traffic | +0.00001 | skip |
+| tg×traffic_cv | +0.00119 | skip |
+| tg×n_facilities | +0.00197 | skip |
+| tg×hours_per_visitor | +0.00406 | skip |
+| tg×longitude | −0.00093 | ADDED |
+| tg×monthly_traffic | +0.00033 | skip |
+| tg×annual_visitors | +0.00009 | skip |
+| tg×log_n_obs | −0.00074 | ADDED |
+| lag1×month_sin | ≈0 | skip |
+| lag1×month_cos | +0.00051 | skip |
+| lag1×year_norm | +0.00001 | skip |
+| lag2×month_sin | ≈0 | skip |
+| lag6×month_sin | ≈0 | ADDED |
+| SDI_cumean×month_sin | ≈0 | skip |
+| SDI_cumean×month_cos | +0.00012 | skip |
+| SDI_dev×month_sin | +0.00003 | skip |
+| SDI_dev×month_cos | +0.00062 | skip |
+| SDI_dev×year_norm | +0.00018 | skip |
+
+**Notes:** ET_range and longitude were the most impactful (ET variability and east-west position both capture taxon-specific habitat diversity). log_n_obs interaction captures per-taxon observer-effort correction. AR×seasonal interactions largely redundant given existing taxon×sin/cos features. Feature count: 194 numeric + 1 categorical.
+
+
+---
+
+## Exp 076–085 — 10-experiment systematic study
+
+**Date:** 2026-05-30  **Base model:** exp079 (val=0.23841, best kept)
+
+### Overview: what was tested and what was learned
+
+| Exp | Change | val_rmse | Status | Finding |
+|-----|--------|----------|--------|---------|
+| 076 | ElasticNet alpha=0.0005 | 0.23945 | DISCARD | Less regularization hurts — alpha=0.001 near-optimal |
+| 077 | ElasticNet alpha=0.003 | 0.23853 | DISCARD | More regularization also worse; alpha=0.001 confirmed optimal |
+| 078 | l1_ratio=0.5 | 0.23869 | DISCARD | More sparsity (L1) hurts; model benefits from Ridge-like l1_ratio=0.2 |
+| 079 | SDI_park_cumean (park baseline) | **0.23841** | **KEEP** | Marginal gain −0.00005; park-level baseline adds slight signal |
+| 080 | SDI_lag_std (lag volatility) | 0.23848 | DISCARD | Redundant with SDI_dev/SDI_dev12; variance of lags adds nothing |
+| 081 | Park×taxon target encoding | 0.48059 | DISCARD | Leakage architecture: model over-relies on train mean; val parks get imputed median → catastrophic |
+| 082 | PCA(50) on tg_ interaction block | 0.23961 | DISCARD | PCA compresses real signal; raw 156 interaction features better |
+| 083 | HistGradientBoostingRegressor | 0.25054 | DISCARD | Tree overfits cross-park split; ElasticNet (linear) generalizes better to unseen parks |
+| 084 | Ridge(alpha=1.0) | 0.24281 | DISCARD | Pure Ridge worse than ElasticNet(l1=0.2); mild L1 sparsity useful |
+| 085 | SDI_cumean × year_norm | 0.23847 | DISCARD | Collinear with existing year_norm and cumean features; no gain |
+
+**Net improvement across all 10 experiments:** −0.00005 (0.23846 → 0.23841)
+
+### Key takeaways
+1. **Hyperparameters locked in:** alpha=0.001, l1_ratio=0.2 are confirmed optimal — alpha search in both directions was worse.
+2. **ElasticNet is the right model type:** both Ridge (more) and HistGBM (tree) performed worse on the park-held-out split. Linear model generalizes better across parks.
+3. **Dimensionality reduction hurts:** PCA on the interaction block loses real signal; raw features should stay.
+4. **Target encoding requires cross-fitting:** simple train-mean encoding leaks; would need proper out-of-fold encoding to be usable.
+5. **Saturated feature set:** model is in true diminishing-returns territory. The remaining 0.038 gap to target is almost certainly from cross-park heterogeneity (each park has a unique ecological context not captured by static features), not from missing interaction terms.
+
